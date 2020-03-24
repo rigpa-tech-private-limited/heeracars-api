@@ -4,7 +4,6 @@ header("Access-Control-Allow-Origin: *");
 // header('content-type: application/json');
 include('lib/rest.model.php');
 include('lib/textlocal.class.php');
-include('lib/credentials.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
   $data = json_decode( file_get_contents( 'php://input' ), true );
