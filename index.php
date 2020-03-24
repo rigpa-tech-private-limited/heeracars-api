@@ -50,7 +50,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $restModel = new RESTAPIModel();
         $user = $restModel->verifyOTP($data['otp'],$data['mobile']);
         $hashed_password = password_hash($data['otp'], PASSWORD_BCRYPT, array('cost'=>5));
-        if(count($count)>0) {
+        if(count($user)>0) {
           $updateCount = $restModel->updateToken($data['otp'],$hashed_password);
           if($updateCount>0){
             echo json_encode(["status"=>'success', 'user'=>$user]);
