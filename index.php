@@ -46,9 +46,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='verifyOTP'){
-      if(isset($data['otp'])){
+      if(isset($data['otp']) && isset($data['mobile'])){
         $restModel = new RESTAPIModel();
-        $user = $restModel->verifyOTP();
+        $user = $restModel->verifyOTP($data['otp'],$data['mobile']);
         $hashed_password = password_hash($data['otp'], PASSWORD_BCRYPT, array('cost'=>5));
         if(count($count)>0) {
           $updateCount = $restModel->updateToken($data['otp'],$hashed_password);

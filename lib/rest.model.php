@@ -43,7 +43,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "UPDATE users SET otp = ".$otp.", is_expired = 0, updated_on='NOW()' WHERE mobile = '" . $mobile . "'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "UPDATE users SET otp = ".$otp.", is_expired = 0 WHERE mobile = '" . $mobile . "'");
                 $count  = mysqli_affected_rows($Dbobj->getdbconnect());
                 
             } catch (Exception $e) {
@@ -53,7 +53,7 @@
             return $count;
         }
 
-        function verifyOTP($mobile,$otp){
+        function verifyOTP($otp,$mobile){
             $user = null;
             try {
                 $Dbobj = new DbConnection(); 
