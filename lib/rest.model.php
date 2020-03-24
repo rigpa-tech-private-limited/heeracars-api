@@ -39,7 +39,7 @@
             return $count;
         }
 
-        function updateOTP(){
+        function updateOTP($otp,$mobile){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 

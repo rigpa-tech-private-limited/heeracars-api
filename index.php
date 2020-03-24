@@ -31,7 +31,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           // } catch (Exception $e) {
           //     echo json_encode(["status"=>"error", 'message'=>$e->getMessage()]);
           // }
-          $updateCount = $restModel->updateOTP();
+          $updateCount = $restModel->updateOTP($otp,$mobile);
           if($updateCount>0){
             echo json_encode(["status"=>'success', 'message'=>'OTP : '.$otp]);
           } else {
