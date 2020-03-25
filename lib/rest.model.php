@@ -99,6 +99,40 @@
             }
         }
 
+        function validateEmail($email){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection(); 
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE email = '$email'");
+                $count  = mysqli_num_rows($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            if($count > 0){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function validateMobile($mobile){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection(); 
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile'");
+                $count  = mysqli_num_rows($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            if($count > 0){
+                return true;
+            } else {
+                return false;
+            }
+        }
+
         function addAgent($name, $mobile, $email, $company, $location){
             
             $insertFlag  = false;
@@ -114,12 +148,61 @@
             return $insertFlag;
         }
 
+        function updateAgent($name, $company="", $location="",$id){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE users SET name = '".$name."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function updateStatusOfAgent($status,$id){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE users SET active = '".$status."' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function deleteAgent($id){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE users SET active = '2' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
         function getAllAgentsList(){
             $agents = [];
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,active FROM users WHERE role='agent'");
+                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,active FROM users WHERE role='agent' AND active!='2'");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
