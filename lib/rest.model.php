@@ -206,7 +206,7 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
-                        $agents[$row["id"]] = $row;
+                        $agents[] = $row;
                     }
                 }
             } catch (Exception $e) {
