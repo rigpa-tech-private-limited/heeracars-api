@@ -64,6 +64,58 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
       }
     }
+
+    if($data['service_name']=='listAgents'){
+      if(isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $agents = $restModel->getAllAgentsList();
+          if(count($agents)>0){
+            echo json_encode(["status"=>'success', 'user'=>$agents]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='validateToken'){
+      if(isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          echo json_encode(["status"=>"success", 'message'=>"valid token."]);
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='addAgent'){
+      if(isset($data['name']) && isset($data['email']) && isset($data['mobile']) && isset($data['company']) && isset($data['location']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location']);
+          if($insertFlag){
+            echo json_encode(["status"=>"success", 'message'=>"Agent added successfully."]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Error occured. Try again later."]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
   } else {
     echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
   }
