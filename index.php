@@ -52,6 +52,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         if($user!=null && count($user)>0) {
           $updateCount = $restModel->updateToken($data['otp'],$hashed_password);
           if($updateCount>0){
+            $user['token'] = $hashed_password;
             echo json_encode(["status"=>'success', 'user'=>$user]);
           } else {
             echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
