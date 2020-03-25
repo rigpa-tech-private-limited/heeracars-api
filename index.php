@@ -44,26 +44,26 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
-    // if($data['service_name']=='verifyOTP'){
-    //   if(isset($data['otp']) && isset($data['mobile'])){
-    //     $restModel = new RESTAPIModel();
-    //     $user = $restModel->verifyOTP($data['otp'],$data['mobile']);
-    //     $hashed_password = password_hash($data['otp'], PASSWORD_BCRYPT, array('cost'=>5));
-    //     if($user!=null && count($user)>0) {
-    //       $updateCount = $restModel->updateToken($data['otp'],$hashed_password);
-    //       if($updateCount>0){
-    //         $user['token'] = $hashed_password;
-    //         echo json_encode(["status"=>'success', 'user'=>$user]);
-    //       } else {
-    //         echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
-    //       }
-    //     } else {
-    //       echo json_encode(["status"=>"error", 'message'=>"Invalid OTP!"]);
-    //     }
-    //   } else {
-    //     echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
-    //   }
-    // }
+    if($data['service_name']=='verifyOTP'){
+      if(isset($data['otp']) && isset($data['mobile'])){
+        $restModel = new RESTAPIModel();
+        $user = $restModel->verifyOTP($data['otp'],$data['mobile']);
+        $hashed_password = password_hash($data['otp'], PASSWORD_BCRYPT, array('cost'=>5));
+        if($user!=null && count($user)>0) {
+          $updateCount = $restModel->updateToken($data['otp'],$hashed_password);
+          if($updateCount>0){
+            $user['token'] = $hashed_password;
+            echo json_encode(["status"=>'success', 'user'=>$user]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid OTP!"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
 
     if($data['service_name']=='listAgents'){
       if(isset($data['token'])){
