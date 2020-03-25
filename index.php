@@ -7,7 +7,6 @@ include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
   $data = json_decode( file_get_contents( 'php://input' ), true );
-  $res = json_encode(['success' => ["status"=>200, 'message'=>$data['mobile']]]);
   if(isset($data['service_name'])){
     if($data['service_name']=='getOTP'){
       if(isset($data['cc']) && isset($data['mobile'])){
