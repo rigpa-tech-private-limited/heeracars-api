@@ -59,7 +59,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1 AND NOW() <= DATE_ADD(updated_on, INTERVAL 24 HOUR)");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
