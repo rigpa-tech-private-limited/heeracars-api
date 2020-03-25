@@ -184,6 +184,25 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
+    if($data['service_name']=='resetAgentLogin'){
+      if(isset($data['id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $agents = $restModel->resetAgentLogin($data['id']);
+          if(count($agents)>0){
+            echo json_encode(["status"=>'success', 'user'=>$agents]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
   } else {
     echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
   }

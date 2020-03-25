@@ -215,5 +215,26 @@
             }
             return $agents;
         }
+
+        function resetAgentLogin($id){
+            $user = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $otp = rand(100000,999999);
+                $hashed_password = password_hash($otp, PASSWORD_BCRYPT, array('cost'=>5));
+                $sql = "UPDATE users SET password = 'heera@123', token = '".$hashed_password."', otp = '".$otp."', is_expired = 1 WHERE id = '" . $id . "'";
+                $updateQuery = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                if($count > 0){
+                    $query = mysqli_query($conn, "SELECT email,mobile,password,token,otp FROM users WHERE id='".$id."' AND role='agent' AND active!='2'");
+                    $user = mysqli_fetch_assoc($query);
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $user;
+        }
     }
 ?>
