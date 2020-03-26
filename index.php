@@ -19,17 +19,17 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($count>0) {
           // generate OTP
           $otp = rand(100000,999999);
-          $textlocal = new Textlocal(TEXTLOCAL_USERNAME, TEXTLOCAL_PASSWORD);
+          // $textlocal = new Textlocal(TEXTLOCAL_USERNAME, TEXTLOCAL_PASSWORD);
 
-          $numbers = array($mobile_no);
-          $sender = 'TXTLCL';
-          $message = 'This is a your OTP '.$otp;
+          // $numbers = array($mobile_no);
+          // $sender = 'TXTLCL';
+          // $message = 'This is a your OTP '.$otp;
 
-          try {
-              $result = $textlocal->sendSms($numbers, $message, $sender);
-          } catch (Exception $e) {
-              echo json_encode(["status"=>"error", 'message'=>$e->getMessage()]);
-          }
+          // try {
+          //     $result = $textlocal->sendSms($numbers, $message, $sender);
+          // } catch (Exception $e) {
+          //     echo json_encode(["status"=>"error", 'message'=>$e->getMessage()]);
+          // }
           $updateCount = $restModel->updateOTP($otp,$mobile);
           if($updateCount>0){
             echo json_encode(["status"=>'success', 'message'=>'OTP : '.$otp]);
