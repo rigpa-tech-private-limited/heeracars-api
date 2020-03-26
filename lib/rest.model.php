@@ -30,7 +30,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile' AND active!='2'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -59,7 +59,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1 AND active!='2'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -86,7 +86,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE token = '$token'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE token = '$token' AND active!='2'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -103,7 +103,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE email = '$email'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE email = '$email' AND active!='2'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -120,7 +120,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile' AND active!='2'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";

@@ -71,11 +71,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $agents = $restModel->getAllAgentsList();
-          if(count($agents)>0){
-            echo json_encode(["status"=>'success', 'user'=>$agents]);
-          } else {
-            echo json_encode(["status"=>"error", 'message'=>"Try again later"]);
-          }
+          echo json_encode(["status"=>'success', 'user'=>$agents]);
         } else {
           echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
         }
