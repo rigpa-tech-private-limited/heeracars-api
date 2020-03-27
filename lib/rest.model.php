@@ -3,10 +3,17 @@
     Class RESTAPIModel{
         function get_all_user_list()
         {
+            $users = [];
             try {
-                $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users");
-                $users = mysqli_fetch_assoc($query);
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM users");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $users[] = $row;
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
@@ -97,6 +104,19 @@
             } else {
                 return false;
             }
+        }
+
+        function getUserByToken($token){
+            $user  = [];
+            try {
+                $Dbobj = new DbConnection(); 
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT id,role FROM users WHERE token = '$token' AND active!='2'");
+                $user = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+           return $user;
         }
 
         function validateEmail($email){
@@ -235,6 +255,165 @@
                 die();
             }
             return $user;
+        }
+
+        function getBrands(){
+            $brands = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM car_make WHERE status='Active' ORDER BY display_order DESC");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $brands[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $brands;
+        }
+
+        function getModels($make_id){
+            $models = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM car_model WHERE make_id='".$make_id."' AND status='Active' ORDER BY display_order DESC");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $models[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $models;
+        }
+
+        function getModelYears($model_id){
+            $modelYears = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM car_variant_year WHERE model_id='".$model_id."' AND status='Active' ORDER BY display_order DESC");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $modelYears[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $modelYears;
+        }
+
+        function getModelYearVariants($model_id,$year_id){
+            $modelYearVariants = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM car_fuel_variant WHERE model_id='".$model_id."' AND year_id='".$year_id."' AND status='Active' ORDER BY display_order DESC");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $modelYearVariants[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $modelYearVariants;
+        }
+
+        function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color,$fuel_type,$car_kms,$car_owner,$is_replacement,$insurance_date,$refurbishment_cost,$requested_price){
+            
+            $insertFlag  = false;
+            try {
+                $Dbobj = new DbConnection(); 
+                $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,insurance_date,refurbishment_cost,requested_price ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$insurance_date','$refurbishment_cost','$requested_price')";
+                $query = mysqli_query($Dbobj->getdbconnect(), $sql);
+                $insertFlag  = $query;
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $insertFlag;
+        }
+
+
+        function approveQuotation($id,$approved_price,$approved_by=0){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', status = '1' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function rejectQuotation($id,$dropped_by=0){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', status = '2' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function getAllQuotations($user_id=''){
+            $quotations = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $condition = '';
+                if($user_id!=''){
+                    $condition = "WHERE q.user_id='".$user_id."'";
+                }
+                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement, insurance_date, refurbishment_cost, requested_price, approved_price, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id ".$condition);
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $quotations[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $quotations;
+        }
+
+        function getQuotationDetail($id){
+            $quotation = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement, insurance_date, refurbishment_cost, requested_price, approved_price, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
+                $quotation = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $quotation;
         }
     }
 ?>
