@@ -261,11 +261,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $insertFlag = $restModel->addQuotations($data['user_id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price']);
-          if($insertFlag){
-            echo json_encode(["status"=>"success", 'message'=>"Quotation request sent successfully."]);
-          } else {
-            echo json_encode(["status"=>"error", 'message'=>"Quotation request not sent."]);
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $insertFlag = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price']);
+            if($insertFlag){
+              echo json_encode(["status"=>"success", 'message'=>"Quotation request sent successfully."]);
+            } else {
+              echo json_encode(["status"=>"error", 'message'=>"Quotation request not sent."]);
+            }
           }
         } else {
           echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
