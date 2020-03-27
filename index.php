@@ -346,10 +346,29 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
+          $quotation = $restModel->getQuotationDetail($data['quotation_id']);
+          echo json_encode(["status"=>'success', 'quotation'=>$quotation]);
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='updateProfile'){
+      if(isset($data['id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $quotation = $restModel->getQuotationDetail($data['quotation_id']);
-            echo json_encode(["status"=>'success', 'quotation'=>$quotation]);
+            $updateCount = $restModel->updateProfile($data['name'], $data['company'], $data['location'], $user['id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", 'message'=>"Profile updated successfully."]);
+            } else {
+              echo json_encode(["status"=>"error", 'message'=>"Profile not updated"]);
+            }
           }
         } else {
           echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
