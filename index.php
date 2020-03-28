@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","testAPI");
+  $allowedAPIs = array("getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -373,6 +373,81 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               echo json_encode(["status"=>"error", 'message'=>"Profile not updated"]);
             }
           }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='addComments'){
+      if(isset($data['quotation_id']) && isset($data['comments']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $insertFlag = $restModel->addQuotationComments($user['id'], $data['quotation_id'], $data['comments']);
+            if($insertFlag){
+              echo json_encode(["status"=>"success", 'message'=>"Quotation comments added successfully."]);
+            } else {
+              echo json_encode(["status"=>"error", 'message'=>"Quotation comments not added."]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='editComments'){
+      if(isset($data['quotation_id']) && isset($data['comments']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $updateCount = $restModel->updateQuotationComments($data['quotation_id'], $data['comments']);
+          if($updateCount > 0){
+            echo json_encode(["status"=>"success", 'message'=>"Quotation comments updated successfully."]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Quotation comments not updated"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='deleteComments'){
+      if(isset($data['quotation_id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $updateCount = $restModel->deleteQuotationComments($data['quotation_id']);
+          if($updateCount > 0){
+            echo json_encode(["status"=>"success", 'message'=>"Quotation comments deleted successfully."]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Quotation comments not deleted"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='getComments'){
+      if(isset($data['quotation_id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $allComments = $restModel->getAllQuotationComments($data['quotation_id']);
+          echo json_encode(["status"=>'success', 'comments'=>$allComments]);
         } else {
           echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
         }

@@ -158,7 +158,7 @@
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                $sql = "INSERT INTO users ( name, mobile, email, company, location, role ) VALUES ('$name', '$mobile', '$email', '$company', '$location','agent')";
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, role, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', 'agent', NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
@@ -355,7 +355,7 @@
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price')";
+                $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price,created_on ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price',NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
@@ -409,6 +409,12 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
+                        $images = $this->getQuotationImages($row['id']);
+                        if(count($images)>0){
+                            $row['images'] = $images;
+                        } else {
+                            $row['images'] = [];
+                        }
                         $quotations[] = $row;
                     }
                 }
@@ -419,6 +425,25 @@
             return $quotations;
         }
 
+        function getQuotationImages($quotation_id){
+            $images = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT image_path FROM quotation_images WHERE quotation_id = ".$quotation_id);
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_array($query)) {
+                        $images[] = UPLOAD_BASE_PATH.$row['image_path'];
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $images;
+        }
+
         function getQuotationDetail($id){
             $quotation = [];
             try {
@@ -426,11 +451,88 @@
                 $conn = $Dbobj->getdbconnect();
                 $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
+                if(count($quotation)>0){
+                    $images = $this->getQuotationImages($quotation['id']);
+                    if(count($images)>0){
+                        $quotation['images'] = $images;
+                    } else {
+                        $quotation['images'] = [];
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
             return $quotation;
         }
+
+        function addQuotationComments($user_id, $quotation_id, $comments){
+            
+            $insertFlag  = false;
+            try {
+                $Dbobj = new DbConnection(); 
+                $sql = "INSERT INTO quotation_comments ( user_id, quotation_id, comments, created_on ) VALUES ('$user_id', '$quotation_id', '$comments', NOW())";
+                $query = mysqli_query($Dbobj->getdbconnect(), $sql);
+                $insertFlag  = $query;
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $insertFlag;
+        }
+
+        function updateQuotationComments($id, $comments){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE quotation_comments SET comments = '".$comments."' WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function deleteQuotationComments($id){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "DELETE FROM quotation_comments WHERE id = '" . $id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+        function getAllQuotationComments($id){
+            $comments = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT qc.id, qc.user_id, u.name as user_name, comments FROM quotation_comments qc INNER JOIN users u ON qc.user_id = u.id WHERE qc.id = ".$id);
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $comments[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $comments;
+        }
+
     }
 ?>
