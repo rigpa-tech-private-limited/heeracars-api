@@ -423,11 +423,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='deleteComments'){
-      if(isset($data['quotation_id']) && isset($data['token'])){
+      if(isset($data['comment_id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $updateCount = $restModel->deleteQuotationComments($data['quotation_id']);
+          $updateCount = $restModel->deleteQuotationComments($data['comment_id']);
           if($updateCount > 0){
             echo json_encode(["status"=>"success", 'message'=>"Quotation comments deleted successfully."]);
           } else {
