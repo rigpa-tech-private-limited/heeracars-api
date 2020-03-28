@@ -402,10 +402,11 @@
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $condition = '';
-                if($user_id!=''){
+                if($user_id != ''){
                     $condition = "WHERE q.user_id='".$user_id."'";
                 }
-                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id ".$condition);
+                echo $sql = "SELECT q.id, q.user_id, u.name, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id ".$condition;
+                $query = mysqli_query($conn, $sql);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
