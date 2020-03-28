@@ -355,7 +355,7 @@
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                echo $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price,created_on ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price',NOW())";
+                $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price,created_on ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price',NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
