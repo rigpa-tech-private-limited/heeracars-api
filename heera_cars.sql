@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Mar 27, 2020 at 08:07 AM
+-- Generation Time: Mar 28, 2020 at 07:13 AM
 -- Server version: 5.7.26
 -- PHP Version: 7.4.2
 
@@ -81,7 +81,7 @@ INSERT INTO `car_make` (`make_id`, `make_name`, `display_order`, `make_display`,
 (2, 'ASTON MARTIN', 0, 'Aston Martin', 'no', NULL, 'Active'),
 (3, 'AUDI', 1, 'Audi', 'yes', 'https://static.cars24.com/cars24/make-logo/audi.png', 'Active'),
 (4, 'BENTLEY', 0, 'Bentley', 'no', NULL, 'Active'),
-(5, 'BMW', 2, 'BMW', 'yes', 'https://static.cars24.com/cars24/make-logo/bmw.png', 'Active'),
+(5, 'BENZ', 2, 'Benz', 'yes', 'https://static.cars24.com/cars24/make-logo/mercedes-benz.png', 'Active'),
 (6, 'BUGATTI', 0, 'Bugatti', 'no', NULL, 'Active'),
 (7, 'CHEVROLET', 11, 'Chevrolet', 'yes', 'https://static.cars24.com/cars24/make-logo/chevrolet.png', 'Active'),
 (8, 'DATSUN', 0, 'Datsun', 'no', NULL, 'Active'),
@@ -206,6 +206,8 @@ CREATE TABLE `quotations` (
   `car_kms` varchar(50) DEFAULT NULL,
   `car_owner` varchar(50) DEFAULT NULL,
   `is_replacement` varchar(10) DEFAULT NULL,
+  `structural_damage` varchar(200) DEFAULT NULL,
+  `structural_damage_desc` text,
   `insurance_date` varchar(100) DEFAULT NULL,
   `refurbishment_cost` varchar(50) DEFAULT NULL,
   `requested_price` varchar(50) DEFAULT NULL,
@@ -213,7 +215,7 @@ CREATE TABLE `quotations` (
   `approved_by` int(50) NOT NULL DEFAULT '0',
   `dropped_by` int(50) NOT NULL DEFAULT '0',
   `status` int(1) NOT NULL DEFAULT '0',
-  `created_on` datetime DEFAULT CURRENT_TIMESTAMP,
+  `created_on` datetime DEFAULT NULL,
   `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -221,9 +223,44 @@ CREATE TABLE `quotations` (
 -- Dumping data for table `quotations`
 --
 
-INSERT INTO `quotations` (`id`, `user_id`, `make_id`, `make_display`, `model_id`, `model_display`, `year_id`, `year`, `variant_id`, `variant_display`, `car_color`, `fuel_type`, `car_kms`, `car_owner`, `is_replacement`, `insurance_date`, `refurbishment_cost`, `requested_price`, `approved_price`, `approved_by`, `dropped_by`, `status`, `created_on`, `updated_on`) VALUES
-(1, 1, 1, 'Ashok Leyland', 1, 'Stile', 1, '2013', 1, 'LE 7 Seater', 'white', 'deisel', '1000', 'Single', 'Yes', '2020-08-01', '20000', '500000', NULL, 0, 0, 0, '2020-03-26 21:32:00', '2020-03-26 21:32:00'),
-(2, 1, 1, 'Ashok Leyland', 2, 'DB9', 4, '2013', 7, 'LE 7 Seater', 'blue', 'Petrol', '6000', 'Second', 'no', '2028-08-01', '40000', '1000000', NULL, 0, 0, 0, '2020-03-26 21:34:37', '2020-03-26 21:34:37');
+INSERT INTO `quotations` (`id`, `user_id`, `make_id`, `make_display`, `model_id`, `model_display`, `year_id`, `year`, `variant_id`, `variant_display`, `car_color`, `fuel_type`, `car_kms`, `car_owner`, `is_replacement`, `structural_damage`, `structural_damage_desc`, `insurance_date`, `refurbishment_cost`, `requested_price`, `approved_price`, `approved_by`, `dropped_by`, `status`, `created_on`, `updated_on`) VALUES
+(1, 1, 1, 'Ashok Leyland', 1, 'Stile', 1, '2013', 1, 'LE 7 Seater', 'white', 'deisel', '1000', 'Single', 'Yes', NULL, NULL, '2020-08-01', '20000', '500000', NULL, 0, 0, 0, '2020-03-26 21:32:00', '2020-03-26 21:32:00'),
+(2, 1, 1, 'Ashok Leyland', 2, 'DB9', 4, '2013', 7, 'LE 7 Seater', 'blue', 'Petrol', '6000', 'Second', 'no', NULL, NULL, '2028-08-01', '40000', '1000000', NULL, 0, 0, 0, '2020-03-26 21:34:37', '2020-03-26 21:34:37');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quotation_comments`
+--
+
+CREATE TABLE `quotation_comments` (
+  `id` int(50) NOT NULL,
+  `quotation_id` int(50) NOT NULL,
+  `user_id` int(50) NOT NULL,
+  `comments` text,
+  `created_on` datetime DEFAULT NULL,
+  `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `quotation_images`
+--
+
+CREATE TABLE `quotation_images` (
+  `id` int(50) NOT NULL,
+  `quotation_id` int(50) NOT NULL,
+  `image_path` varchar(1000) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `quotation_images`
+--
+
+INSERT INTO `quotation_images` (`id`, `quotation_id`, `image_path`) VALUES
+(1, 1, '1.png'),
+(2, 1, '2.png');
 
 -- --------------------------------------------------------
 
@@ -244,7 +281,7 @@ CREATE TABLE `users` (
   `is_expired` int(1) NOT NULL DEFAULT '0',
   `role` varchar(50) DEFAULT NULL,
   `active` int(1) NOT NULL DEFAULT '1',
-  `created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `created_on` datetime DEFAULT NULL,
   `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -292,6 +329,18 @@ ALTER TABLE `quotations`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `quotation_comments`
+--
+ALTER TABLE `quotation_comments`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `quotation_images`
+--
+ALTER TABLE `quotation_images`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -331,6 +380,18 @@ ALTER TABLE `car_variant_year`
 -- AUTO_INCREMENT for table `quotations`
 --
 ALTER TABLE `quotations`
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT for table `quotation_comments`
+--
+ALTER TABLE `quotation_comments`
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `quotation_images`
+--
+ALTER TABLE `quotation_images`
   MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
