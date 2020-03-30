@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("getUserInfo","uploadImage","getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -464,6 +464,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
 
+  $allowedAPIs = array("getUserInfo","uploadImage");
+
+
   if(isset($_GET['service_name']) && $_GET['service_name']!='' && in_array($_GET['service_name'], $allowedAPIs)){
     if($_GET['service_name']=='uploadImage'){
 
@@ -479,8 +482,15 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       
     }
 
+    echo $_GET['service_name'];
     if($_GET['service_name']=='getUserInfo'){
-
+      //Write action to txt log
+      $log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
+      "Attempt: ".($_GET['service_name']=='getUserInfo'?'Success':'Failed').PHP_EOL.
+      "User: ".$username.PHP_EOL.
+      "-------------------------".PHP_EOL;
+      //-
+      file_put_contents('./log_'.date("j.n.Y").'.txt', $log, FILE_APPEND);
       if(isset($_GET['id']))
       {
         $id =  $_GET['id'];
