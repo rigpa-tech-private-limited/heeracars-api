@@ -471,9 +471,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($tokenValidation || ($tokenValidation==1)){
             $user = $restModel->getUserByToken($data['token']);
             if(count($user) > 0){
-              $insertFlag = $restModel->addQuotationImages($data['quotation_id'], $file);
-              if($insertFlag){
-                echo json_encode(["status"=>"success", 'message'=>"Quotation image uploaded successfully."]);
+              $insertID = $restModel->addQuotationImages($data['quotation_id'], $file);
+              if($insertID!=''){
+                echo json_encode(["status"=>"success","image_id"=>$insertID, 'message'=>"Quotation image uploaded successfully."]);
               } else {
                 echo json_encode(["status"=>"error", 'message'=>"Quotation image not uploaded."]);
               }

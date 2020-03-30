@@ -355,9 +355,10 @@
             $$last_id  = '';
             try {
                 $Dbobj = new DbConnection(); 
+                $conn = $Dbobj->getdbconnect();
                 $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price,created_on ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price',NOW())";
-                $query = mysqli_query($Dbobj->getdbconnect(), $sql);
-                $last_id = mysqli_insert_id($Dbobj->getdbconnect());
+                $query = mysqli_query($conn, $sql);
+                $last_id = mysqli_insert_id($conn);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
@@ -567,17 +568,18 @@
 
         function addQuotationImages($quotation_id, $image_path){
             
-            $insertFlag  = false;
+            $last_id  = '';
             try {
                 $Dbobj = new DbConnection(); 
+                $conn = $Dbobj->getdbconnect();
                 $sql = "INSERT INTO quotation_images ( quotation_id, image_path ) VALUES ('$quotation_id', '$image_path')";
-                $query = mysqli_query($Dbobj->getdbconnect(), $sql);
-                $insertFlag  = $query;
+                $query = mysqli_query($conn, $sql);
+                $last_id = mysqli_insert_id($conn);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
-            return $insertFlag;
+            return $last_id;
         }
         
 
