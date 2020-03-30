@@ -468,8 +468,15 @@ if($_SERVER['REQUEST_METHOD']=="GET")
 
 
   if(isset($_GET['service_name']) && $_GET['service_name']!='' && in_array($_GET['service_name'], $allowedAPIs)){
+    //Write action to txt log
+    $log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
+    "service_name: ".$_GET['service_name'].PHP_EOL.
+    "filename: ".$_FILES['file']['name'].PHP_EOL.
+    "-------------------------".PHP_EOL;
+    //-
+    file_put_contents('./log_'.date("j.n.Y").'.txt', $log, FILE_APPEND);
     if($_GET['service_name']=='uploadImage'){
-
+    
       $target_path = "uploads/";
     
       $target_path = $target_path . basename( $_FILES['file']['name']);
@@ -481,16 +488,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       }
       
     }
-
-    echo $_GET['service_name'];
     if($_GET['service_name']=='getUserInfo'){
-      //Write action to txt log
-      $log  = "User: ".$_SERVER['REMOTE_ADDR'].' - '.date("F j, Y, g:i a").PHP_EOL.
-      "Attempt: ".($_GET['service_name']=='getUserInfo'?'Success':'Failed').PHP_EOL.
-      "User: ".$username.PHP_EOL.
-      "-------------------------".PHP_EOL;
-      //-
-      file_put_contents('./log_'.date("j.n.Y").'.txt', $log, FILE_APPEND);
       if(isset($_GET['id']))
       {
         $id =  $_GET['id'];
