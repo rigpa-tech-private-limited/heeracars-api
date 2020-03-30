@@ -463,7 +463,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
-
+  $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!=''){
     if($data['service_name']=='uploadImage'){
 
@@ -476,7 +476,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       } else {
         echo json_encode(["status"=>"success","target_path"=>$target_path, 'message'=>"There was an error uploading the file, please try again!"]);
       }
-      
+
     }
 
     if($data['service_name']=='getUserInfo'){
