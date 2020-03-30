@@ -404,11 +404,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='editComments'){
-      if(isset($data['quotation_id']) && isset($data['comments']) && isset($data['token'])){
+      if(isset($data['comment_id']) && isset($data['comments']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $updateCount = $restModel->updateQuotationComments($data['quotation_id'], $data['comments']);
+          $updateCount = $restModel->updateQuotationComments($data['comment_id'], $data['comments']);
           if($updateCount > 0){
             echo json_encode(["status"=>"success", 'message'=>"Quotation comments updated successfully."]);
           } else {
@@ -463,22 +463,44 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
-  if(isset($_GET['id']))
-  {
-    $id =  $_GET['id'];
-    $restModel = new RESTAPIModel();
-    $json = $restModel->get_single_user_info($id);
-    if(empty($json))
-    header("HTTP/1.1 404 Not Found");
-    echo json_encode($json);
+
+  if(isset($data['service_name']) && $data['service_name']!=''){
+    if($data['service_name']=='uploadImage'){
+
+      $target_path = "uploads/";
+    
+      $target_path = $target_path . basename( $_FILES['file']['name']);
+      
+      if (move_uploaded_file($_FILES['file']['tmp_name'], $target_path)) {
+        echo json_encode(["status"=>"success", 'message'=>"Upload and move success"]);
+      } else {
+        echo json_encode(["status"=>"success","target_path"=>$target_path, 'message'=>"There was an error uploading the file, please try again!"]);
+      }
+      
+    }
+
+    if($data['service_name']=='getUserInfo'){
+
+      if(isset($_GET['id']))
+      {
+        $id =  $_GET['id'];
+        $restModel = new RESTAPIModel();
+        $json = $restModel->get_single_user_info($id);
+        if(empty($json))
+        header("HTTP/1.1 404 Not Found");
+        echo json_encode($json);
+      } else{
+        $restModel = new RESTAPIModel();
+        $json = $restModel->get_all_user_list();
+        if(empty($json))
+        header("HTTP/1.1 404 Not Found");
+        echo json_encode($json);
+      }
+    }
+  } else {
+    echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
   }
-  else{
-    $restModel = new RESTAPIModel();
-    $json = $restModel->get_all_user_list();
-    if(empty($json))
-    header("HTTP/1.1 404 Not Found");
-    echo json_encode($json);
-  }
+  
 }
 
 ?>
