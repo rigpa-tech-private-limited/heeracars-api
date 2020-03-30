@@ -521,7 +521,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT qc.id, qc.user_id, u.name as user_name, comments FROM quotation_comments qc INNER JOIN users u ON qc.user_id = u.id WHERE qc.quotation_id = ".$id);
+                $query = mysqli_query($conn, "SELECT qc.id, qc.user_id, u.role, u.name as user_name, comments FROM quotation_comments qc INNER JOIN users u ON qc.user_id = u.id WHERE qc.quotation_id = ".$id);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
