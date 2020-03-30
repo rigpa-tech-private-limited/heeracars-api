@@ -467,6 +467,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         file_put_contents('./uploads/'.$file, $image_base64);
         echo json_encode(["status"=>"success","file"=>$file, 'message'=>"Web service not available"]);
       }
+    }
   } else {
     echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
   }
