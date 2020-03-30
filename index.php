@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("uploadImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("addQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -263,9 +263,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $insertFlag = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price']);
-            if($insertFlag){
-              echo json_encode(["status"=>"success", 'message'=>"Quotation request sent successfully."]);
+            $insertID = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price']);
+            if($insertID!=''){
+              echo json_encode(["status"=>"success","quotation_id"=>$insertID, 'message'=>"Quotation request sent successfully."]);
             } else {
               echo json_encode(["status"=>"error", 'message'=>"Quotation request not sent."]);
             }
@@ -457,7 +457,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
 
-    if($data['service_name']=='uploadImage'){
+    if($data['service_name']=='addQuotationImage'){
       if(isset($data['image']) && isset($data['quotation_id']) && isset($data['token'])){
         $image_parts = explode(";base64,", $data['image']);
         $image_type_aux = explode("image/", $image_parts[0]);
@@ -465,7 +465,25 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $image_base64 = base64_decode($image_parts[1]);
         $file = "image_". uniqid() . '.png';
         file_put_contents('./uploads/'.$file, $image_base64);
-        echo json_encode(["status"=>"success","file"=>$file, 'message'=>"Web service not available"]);
+        if($file!=''){
+          $restModel = new RESTAPIModel();
+          $tokenValidation = $restModel->validateUserToken($data['token']);
+          if($tokenValidation || ($tokenValidation==1)){
+            $user = $restModel->getUserByToken($data['token']);
+            if(count($user) > 0){
+              $insertFlag = $restModel->addQuotationImages($data['quotation_id'], $file);
+              if($insertFlag){
+                echo json_encode(["status"=>"success", 'message'=>"Quotation image uploaded successfully."]);
+              } else {
+                echo json_encode(["status"=>"error", 'message'=>"Quotation image not uploaded."]);
+              }
+            }
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+          }
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
       }
     }
   } else {
