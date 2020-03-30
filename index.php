@@ -360,7 +360,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='updateProfile'){
-      if(isset($data['id']) && isset($data['token'])){
+      if(isset($data['name']) && isset($data['company']) && isset($data['location']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
