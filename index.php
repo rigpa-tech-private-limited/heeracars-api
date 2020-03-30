@@ -463,8 +463,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
         $image_base64 = base64_decode($image_parts[1]);
-        $file = UPLOAD_DIR . uniqid() . '.png';
-        file_put_contents($file, $image_base64);
+        $file = "image_". uniqid() . '.png';
+        file_put_contents('./uploads/'.$file, $image_base64);
+        echo json_encode(["status"=>"success","file"=>$file, 'message'=>"Web service not available"]);
       }
   } else {
     echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
