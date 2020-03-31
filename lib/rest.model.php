@@ -37,7 +37,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile' AND active!='2'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile' AND active='1'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
