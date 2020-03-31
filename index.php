@@ -324,15 +324,35 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 
     if($data['service_name']=='getAllQuotations'){
       if(isset($data['token'])){
+        $sort_by='';
+        $date_from='';
+        $date_to='';
+        $price_min='';
+        $price_max='';
+        if(isset($data['sort_by']) && $data['sort_by']!=''){
+          $sort_by = $data['sort_by'];
+        }
+        if(isset($data['date_from']) && $data['date_from']!=''){
+          $date_from = $data['date_from'];
+        }
+        if(isset($data['date_to']) && $data['date_to']!=''){
+          $date_to = $data['date_to'];
+        }
+        if(isset($data['price_min']) && $data['price_min']!=''){
+          $price_min = $data['price_min'];
+        }
+        if(isset($data['price_max']) && $data['price_max']!=''){
+          $price_max = $data['price_max'];
+        }
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
             if($user['role']=='admin'){
-              $allQuotations = $restModel->getAllQuotations();
+              $allQuotations = $restModel->getAllQuotations('',$sort_by,$date_from,$date_to,$price_min,$price_max);
             } else {
-              $allQuotations = $restModel->getAllQuotations($user['id']);
+              $allQuotations = $restModel->getAllQuotations($user['id'],$sort_by,$date_from,$date_to,$price_min,$price_max);
             }
             echo json_encode(["status"=>'success', 'quotations'=>$allQuotations]);
           }
