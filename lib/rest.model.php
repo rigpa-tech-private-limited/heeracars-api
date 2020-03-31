@@ -66,7 +66,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1 AND active!='2'");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE mobile='".$mobile."' AND otp='" . $otp . "' AND is_expired!=1 AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -93,7 +93,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE token = '$token' AND active!='2'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE token = '$token' AND active='1'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -110,7 +110,7 @@
             $user  = [];
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT id,role FROM users WHERE token = '$token' AND active!='2'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT id,role FROM users WHERE token = '$token' AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
