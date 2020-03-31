@@ -329,7 +329,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $date_to='';
         $price_min='';
         $price_max='';
-        if(isset($data['sort_by']) && $data['sort_by']!=''){
+        if(isset($data['sort_by']) && $data['sort_by']!='' && in_array($data['sort_by'], array("ASC","DESC"))){
           $sort_by = $data['sort_by'];
         }
         if(isset($data['date_from']) && $data['date_from']!=''){

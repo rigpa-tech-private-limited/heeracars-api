@@ -407,10 +407,10 @@
                     $condition .= " AND q.user_id='".$user_id."'";
                 }
                 if($date_from != '' && $date_to != ''){
-                    $condition .= " AND DATE(q.created_on) between '".$date_from."' and '".$date_to."'";
+                    $condition .= " AND (DATE(q.created_on) between '".$date_from."' and '".$date_to."')";
                 }
                 if($price_min != '' && $price_max != ''){
-                    $condition .= " AND (q.requested_price) between '".$price_min."' and '".$price_max."'";
+                    $condition .= " AND (q.requested_price between '".$price_min."' and '".$price_max."')";
                 }                
                 if($sort_by != ''){
                     $condition .= " ORDER BY q.created_on ".$sort_by;

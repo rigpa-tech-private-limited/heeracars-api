@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Mar 28, 2020 at 07:13 AM
+-- Generation Time: Mar 31, 2020 at 12:48 PM
 -- Server version: 5.7.26
 -- PHP Version: 7.4.2
 
@@ -210,22 +210,14 @@ CREATE TABLE `quotations` (
   `structural_damage_desc` text,
   `insurance_date` varchar(100) DEFAULT NULL,
   `refurbishment_cost` varchar(50) DEFAULT NULL,
-  `requested_price` varchar(50) DEFAULT NULL,
-  `approved_price` varchar(50) DEFAULT NULL,
+  `requested_price` decimal(10,2) NOT NULL DEFAULT '0.00',
+  `approved_price` decimal(10,2) DEFAULT '0.00',
   `approved_by` int(50) NOT NULL DEFAULT '0',
   `dropped_by` int(50) NOT NULL DEFAULT '0',
   `status` int(1) NOT NULL DEFAULT '0',
   `created_on` datetime DEFAULT NULL,
   `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `quotations`
---
-
-INSERT INTO `quotations` (`id`, `user_id`, `make_id`, `make_display`, `model_id`, `model_display`, `year_id`, `year`, `variant_id`, `variant_display`, `car_color`, `fuel_type`, `car_kms`, `car_owner`, `is_replacement`, `structural_damage`, `structural_damage_desc`, `insurance_date`, `refurbishment_cost`, `requested_price`, `approved_price`, `approved_by`, `dropped_by`, `status`, `created_on`, `updated_on`) VALUES
-(1, 1, 1, 'Ashok Leyland', 1, 'Stile', 1, '2013', 1, 'LE 7 Seater', 'white', 'deisel', '1000', 'Single', 'Yes', NULL, NULL, '2020-08-01', '20000', '500000', NULL, 0, 0, 0, '2020-03-26 21:32:00', '2020-03-26 21:32:00'),
-(2, 1, 1, 'Ashok Leyland', 2, 'DB9', 4, '2013', 7, 'LE 7 Seater', 'blue', 'Petrol', '6000', 'Second', 'no', NULL, NULL, '2028-08-01', '40000', '1000000', NULL, 0, 0, 0, '2020-03-26 21:34:37', '2020-03-26 21:34:37');
 
 -- --------------------------------------------------------
 
@@ -253,14 +245,6 @@ CREATE TABLE `quotation_images` (
   `quotation_id` int(50) NOT NULL,
   `image_path` varchar(1000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Dumping data for table `quotation_images`
---
-
-INSERT INTO `quotation_images` (`id`, `quotation_id`, `image_path`) VALUES
-(1, 1, '1.png'),
-(2, 1, '2.png');
 
 -- --------------------------------------------------------
 
@@ -380,7 +364,7 @@ ALTER TABLE `car_variant_year`
 -- AUTO_INCREMENT for table `quotations`
 --
 ALTER TABLE `quotations`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quotation_comments`
@@ -392,7 +376,7 @@ ALTER TABLE `quotation_comments`
 -- AUTO_INCREMENT for table `quotation_images`
 --
 ALTER TABLE `quotation_images`
-  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(50) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
