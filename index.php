@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModelYearVariants","addQuotations","getModelYears","getModels","getBrands","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -486,6 +486,26 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
       }
     }
+
+    if($data['service_name']=='updateQuotationImage'){
+      if(isset($data['image_id']) && isset($data['image']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $updateCount = $restModel->updateQuotationImages($data['image_id'], $data['image']);
+          if($updateCount > 0){
+            echo json_encode(["status"=>"success","image_id"=>$data['image_id'], 'message'=>"Quotation image updated successfully."]);
+          } else {
+            echo json_encode(["status"=>"error", 'message'=>"Quotation image not updated"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
+      }
+    }
+
   } else {
     echo json_encode(["status"=>"error", 'message'=>"Web service not available"]);
   }

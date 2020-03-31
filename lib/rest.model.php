@@ -397,7 +397,7 @@
             return $count;
         }
 
-        function getAllQuotations($user_id=''){
+        function getAllQuotations($user_id='',$sort_by='',$filter_by=''){
             $quotations = [];
             try {
                 $Dbobj = new DbConnection();
@@ -580,6 +580,23 @@
                 die();
             }
             return $last_id;
+        }
+
+        function updateQuotationImages($image_id, $image_path){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "UPDATE quotation_images SET image_path = '".$image_path."' WHERE id = '" . $image_id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
         }
         
 
