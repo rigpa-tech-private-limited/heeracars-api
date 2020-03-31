@@ -488,18 +488,29 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='updateQuotationImage'){
-      if(isset($data['image_id']) && isset($data['image']) && isset($data['token'])){
-        $restModel = new RESTAPIModel();
-        $tokenValidation = $restModel->validateUserToken($data['token']);
-        if($tokenValidation || ($tokenValidation==1)){
-          $updateCount = $restModel->updateQuotationImages($data['image_id'], $data['image']);
-          if($updateCount > 0){
-            echo json_encode(["status"=>"success","image_id"=>$data['image_id'], 'message'=>"Quotation image updated successfully."]);
+      if(isset($data['image']) && isset($data['image_id']) && isset($data['token'])){
+        $image_parts = explode(";base64,", $data['image']);
+        $image_type_aux = explode("image/", $image_parts[0]);
+        $image_type = $image_type_aux[1];
+        $image_base64 = base64_decode($image_parts[1]);
+        $file = "image_". uniqid() . '.png';
+        file_put_contents('./uploads/'.$file, $image_base64);
+        if($file!=''){
+          $restModel = new RESTAPIModel();
+          $tokenValidation = $restModel->validateUserToken($data['token']);
+          if($tokenValidation || ($tokenValidation==1)){
+            $user = $restModel->getUserByToken($data['token']);
+            if(count($user) > 0){
+              $updateCount = $restModel->updateQuotationImages($data['image_id'], $file);
+              if($updateCount > 0){
+                echo json_encode(["status"=>"success","image_id"=>$data['image_id'], 'message'=>"Quotation image updated successfully."]);
+              } else {
+                echo json_encode(["status"=>"error", 'message'=>"Quotation image not updated"]);
+              }
+            }
           } else {
-            echo json_encode(["status"=>"error", 'message'=>"Quotation image not updated"]);
+            echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
           }
-        } else {
-          echo json_encode(["status"=>"error", 'message'=>"Invalid Token"]);
         }
       } else {
         echo json_encode(["status"=>"error", 'message'=>"Invalid parameters"]);
