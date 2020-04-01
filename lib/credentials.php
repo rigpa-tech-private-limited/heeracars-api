@@ -8,4 +8,5 @@ define("DB_PASSWORD","amigo2020");
 define("DB_NAME","heera_cars");
 define('UPLOAD_BASE_PATH', 'http://amigo.care/heeracars-api/uploads/');
 define('UPLOAD_DIR', 'uploads/');
+define('FIREBASE_API_KEY', 'AAAAty2CKOE:APA91bHyoL1FEyXWUUZUHA86eFTEayD6zijaqw4wV6j4wq8HInFWKz-EDpV6DTqp419Ecni5shalcd7pmHmnDqISExxb-awwwKvlybtPryQQ8IDsAf0LWutbT0w4K7QjisozblY9l5T6');
 ?>

@@ -545,7 +545,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
 
-  $allowedAPIs = array("getUserInfo","uploadImage");
+  $allowedAPIs = array("getUserInfo","uploadImage","sendPush","importCSV");
 
 
   if(isset($_GET['service_name']) && $_GET['service_name']!='' && in_array($_GET['service_name'], $allowedAPIs)){
@@ -569,6 +569,25 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       }
       
     }
+
+    if($_GET['service_name']=='sendPush'){
+      $restModel = new RESTAPIModel();
+      $restModel->sendSinglePush('Notification','This is test message from server');
+    }
+
+    if($_GET['service_name']=='importCSV'){
+      $restModel = new RESTAPIModel();
+      // $status = $restModel->importDataFromCSV();
+      // if($status=='success'){
+      //   echo json_encode(["status"=>"success", 'message'=>"CSV Data Imported into the Database"]);
+      // } else {
+      //   echo json_encode(["status"=>"error", 'message'=>"Problem in Importing CSV Data"]);
+      // }
+      $makemodels = $restModel->getallMakeModelData();
+      
+    }
+
+    
     if($_GET['service_name']=='getUserInfo'){
       if(isset($_GET['id']))
       {

@@ -1,5 +1,7 @@
 <?php
     require_once('database.php');
+    require_once('Firebase.php');
+    require_once('Push.php'); 
     Class RESTAPIModel{
         function get_all_user_list()
         {
@@ -441,7 +443,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT image_path FROM quotation_images WHERE quotation_id = ".$quotation_id);
+                $query = mysqli_query($conn, "SELECT id,image_path,image_index FROM quotation_images WHERE quotation_id = ".$quotation_id);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_array($query)) {
@@ -607,7 +609,147 @@
             }
             return $count;
         }
-        
 
+        function sendSinglePush($title, $message, $imagePath=''){
+            //creating a new push
+            $push = null; 
+            //first check if the push has an image with it
+            if($imagePath!=''){
+                $push = new Push(
+                        $title,
+                        $message,
+                        $imagePath
+                    );
+            }else{
+                //if the push don't have an image give null in place of image
+                $push = new Push(
+                        $title,
+                        $message,
+                        null
+                    );
+            }
+
+            //getting the push from push object
+            $mPushNotification = $push->getPush(); 
+
+            //getting the token from database object 
+            $devicetoken = array('eiW2dqLz8As:APA91bHt3s4R1cn2ji2DV8WxLdnu7QKHP9hNDxUa7DRRA5NbI6q8vn4dfxiJTHE9uCcB2sYOkSHwJuEZ6kaSgv3SbYMMgx1mYqJWU9khQ1QJnjQP9iuDb63GW2UBgEtYQ3yHW8xcK7BO',"eARc3nz_2yo:APA91bFObTeQxwDKoj-C4n0-LtJGdkYrk6NVVzJWR8s-OsOeJJ-jErOmMwbwnwykp3hucrqNPpmpqFmLns8RQydI-5Oad_8b6cNPE-QitVIRZTi3CpQRrh7YzEk00gbzn_Q_bKl83IP6");
+
+            //creating firebase class object 
+            $firebase = new Firebase(); 
+
+            //sending push notification and displaying result 
+            echo $firebase->send($devicetoken, $mPushNotification);
+        }
+
+        function importDataFromCSV(){
+            $Dbobj = new DbConnection();
+            $conn = $Dbobj->getdbconnect();
+            $fileName = "./csv/make_model.csv";
+            $file = fopen($fileName, "r");
+        
+            while (($column = fgetcsv($file, 10000, ";")) !== FALSE) {
+                $sqlInsert = "INSERT into make_model (vehicle,make,model,variant,year)
+                    values ('" . $column[0] . "','" . $column[1] . "','" . $column[2] . "','" . $column[3] . "','" . $column[4] . "')";
+                $result = mysqli_query($conn, $sqlInsert);
+                
+                if (!empty($result)) {
+                    $type = "success";
+                } else {
+                    $type = "error";
+                }
+            }
+
+            echo $type;
+        }
+
+        function getallMakeModelData(){
+            $makemodels = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT vehicle,make,model,variant,year FROM make_model WHERE vehicle='CAR' AND variant NOT LIKE '%Select%' AND year NOT LIKE '%Select%'");
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $makemodels[] = $row;
+                    }
+                }
+
+
+                echo "<pre>";
+                // print_r($makemodels);
+                $make = '';
+                for($i=0;$i<count($makemodels);$i++){
+                    if($make!=$makemodels[$i]['make']){
+                    $make = $makemodels[$i]['make'];
+                    // echo "make =>".$i." ".$make."<br>";
+                    $make_display = ucfirst($make);
+                    echo "INSERT into car_make (make_name,make_display)
+                    values ('" . $make . "','" . $make_display . "')"."<br>";
+                    $sqlInsertMake = "INSERT into car_make (make_name,make_display)
+                    values ('" . $make . "','" . $make_display . "')";
+                    $queryMake = mysqli_query($conn, $sqlInsertMake);
+                    $make_last_id = mysqli_insert_id($conn);
+                    $model = '';
+                    for($j=0;$j<count($makemodels);$j++){
+                        if($make==$makemodels[$j]['make'] && $model!=$makemodels[$j]['model']){
+                        $model = $makemodels[$j]['model'];
+                        // echo "model =>".$j." ".$model."<br>";
+                        $model_display = ucfirst($model);
+                        echo "INSERT into car_model (make_id,model_name,model_display)
+                        values ($make_last_id,'" . $model . "','" . $model_display . "')"."<br>";
+                        $sqlInsertModel = "INSERT into car_model (make_id,model_name,model_display)
+                        values ($make_last_id,'" . $model . "','" . $model_display . "')";
+                        $queryModel = mysqli_query($conn, $sqlInsertModel);
+                        $model_last_id = mysqli_insert_id($conn);
+                        $variant = '';
+                        for($k=0;$k<count($makemodels);$k++){
+                            if($make==$makemodels[$k]['make'] && $model==$makemodels[$k]['model'] && $variant!=$makemodels[$k]['variant']){
+                            $variant = $makemodels[$k]['variant'];
+                            // echo "variant =>".$k." ".$variant."<br>";
+                            $variant_display = ucfirst($variant);
+                            echo "INSERT into car_variant (model_id,variant_name,variant_display)
+                            values ($model_last_id,'" . $variant . "','" . $variant_display . "')"."<br>";
+                            $sqlInsertVariant = "INSERT into car_variant (model_id,variant_name,variant_display)
+                            values ($model_last_id,'" . $variant . "','" . $variant_display . "')";
+                            $queryVariant = mysqli_query($conn, $sqlInsertVariant);
+                            $variant_last_id = mysqli_insert_id($conn);
+                            $year = '';
+                            for($l=0;$l<count($makemodels);$l++){
+                                if($make==$makemodels[$l]['make'] && $model==$makemodels[$l]['model'] && $variant==$makemodels[$l]['variant'] && $year!=$makemodels[$l]['year']){
+                                $year = $makemodels[$l]['year'];
+                                // echo "year =>".$l." ".$year."<br>";
+                                $str = $year;
+                                $expArr = (explode("-",$str));
+                                $start = $expArr[0];
+                                $end = ($expArr[1]=='Present')?"2020":$expArr[1];
+                                for($m=($start);$m<=$end;$m++){
+                                // echo $m."<br>";
+                                echo  "INSERT into car_year (variant_id,year_display)
+                                values ($variant_last_id,'" . $m . "')"."<br>";
+                                $sqlInsertYear = "INSERT into car_year (variant_id,year_display)
+                                values ($variant_last_id,'" . $m . "')";
+                                $queryVariant = mysqli_query($conn, $sqlInsertYear);
+                                $year_last_id = mysqli_insert_id($conn);
+                                echo $year_last_id." <br>";
+                                }
+                                }    
+                            }
+                            }    
+                        }
+                        }
+                    }
+                    }
+                }
+
+
+
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $makemodels;
+        }
     }
 ?>
