@@ -447,7 +447,10 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_array($query)) {
-                        $row['image_path'] = UPLOAD_BASE_PATH.$row['image_path'];
+                        $tempArr = [];
+                        $tempArr['image_id'] = $row['id'];
+                        $tempArr['image_path'] = UPLOAD_BASE_PATH.$row['image_path'];
+                        $tempArr['image_index'] = $row['image_index'];
                         $images[] = $row;
                     }
                 }
