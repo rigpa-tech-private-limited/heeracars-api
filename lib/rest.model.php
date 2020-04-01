@@ -447,7 +447,8 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_array($query)) {
-                        $images[] = UPLOAD_BASE_PATH.$row['image_path'];
+                        $row['image_path'] = UPLOAD_BASE_PATH.$row['image_path'];
+                        $images[] = $row;
                     }
                 }
             } catch (Exception $e) {
