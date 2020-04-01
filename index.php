@@ -478,7 +478,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 
 
     if($data['service_name']=='addQuotationImage'){
-      if(isset($data['image']) && isset($data['quotation_id']) && isset($data['token'])){
+      if(isset($data['image']) && isset($data['quotation_id']) && isset($data['image_index']) && isset($data['token'])){
         $image_parts = explode(";base64,", $data['image']);
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
@@ -491,7 +491,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($tokenValidation || ($tokenValidation==1)){
             $user = $restModel->getUserByToken($data['token']);
             if(count($user) > 0){
-              $insertID = $restModel->addQuotationImages($data['quotation_id'], $file);
+              $insertID = $restModel->addQuotationImages($data['quotation_id'], $file,$data['image_index']);
               if($insertID!=''){
                 echo json_encode(["status"=>"success","image_id"=>$insertID, 'message'=>"Quotation image uploaded successfully."]);
               } else {
@@ -508,7 +508,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='updateQuotationImage'){
-      if(isset($data['image']) && isset($data['image_id']) && isset($data['token'])){
+      if(isset($data['image']) && isset($data['image_index']) && isset($data['image_id']) && isset($data['token'])){
         $image_parts = explode(";base64,", $data['image']);
         $image_type_aux = explode("image/", $image_parts[0]);
         $image_type = $image_type_aux[1];
@@ -521,7 +521,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($tokenValidation || ($tokenValidation==1)){
             $user = $restModel->getUserByToken($data['token']);
             if(count($user) > 0){
-              $updateCount = $restModel->updateQuotationImages($data['image_id'], $file);
+              $updateCount = $restModel->updateQuotationImages($data['image_id'], $file,$data['image_index']);
               if($updateCount > 0){
                 echo json_encode(["status"=>"success","image_id"=>$data['image_id'], 'message'=>"Quotation image updated successfully."]);
               } else {

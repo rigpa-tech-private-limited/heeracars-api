@@ -581,13 +581,13 @@
             return $string ? implode(', ', $string) . ' ago' : 'just now';
         }
 
-        function addQuotationImages($quotation_id, $image_path){
+        function addQuotationImages($quotation_id, $image_path, $image_index=''){
             
             $last_id  = '';
             try {
                 $Dbobj = new DbConnection(); 
                 $conn = $Dbobj->getdbconnect();
-                $sql = "INSERT INTO quotation_images ( quotation_id, image_path ) VALUES ('$quotation_id', '$image_path')";
+                $sql = "INSERT INTO quotation_images ( quotation_id, image_path, image_index ) VALUES ('$quotation_id', '$image_path', '$image_index')";
                 $query = mysqli_query($conn, $sql);
                 $last_id = mysqli_insert_id($conn);
             } catch (Exception $e) {
@@ -597,13 +597,13 @@
             return $last_id;
         }
 
-        function updateQuotationImages($image_id, $image_path){
+        function updateQuotationImages($image_id, $image_path, $image_index=''){
             
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE quotation_images SET image_path = '".$image_path."' WHERE id = '" . $image_id . "'";
+                $sql = "UPDATE quotation_images SET image_path = '".$image_path."',image_index = '".$image_index."' WHERE id = '" . $image_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 
