@@ -396,7 +396,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', status = '1' WHERE id = '" . $id . "'";
+                $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', approved_date='NOW()', status = '1' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
@@ -419,7 +419,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', status = '2' WHERE id = '" . $id . "'";
+                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', dropped_date='NOW()', status = '2' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
@@ -455,7 +455,7 @@
                 if($sort_by != ''){
                     $condition .= " ORDER BY q.created_on ".$sort_by;
                 }
-                $sql = "SELECT q.id, q.user_id, u.name,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
+                $sql = "SELECT q.id, q.user_id, u.name,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by)),'-') as approved_by, q.approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by)),'-') as dropped_by, q.dropped_date, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
@@ -504,7 +504,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name,u.company, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
+                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name,u.company, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price, IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by)),'-') as approved_by, q.approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by)),'-') as dropped_by, q.dropped_date, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
                 if(count($quotation)>0){
                     $images = $this->getQuotationImages($quotation['id']);
@@ -672,7 +672,7 @@
             }
 
             //getting the push from push object
-            $mPushNotification = $push->getPush(); 
+            $mPushNotification = $push->getPush();
 
             //getting the token from database object 
             $devicetoken = array($device_token);
@@ -681,7 +681,7 @@
             $firebase = new Firebase(); 
 
             //sending push notification and displaying result 
-            $firebase->send($devicetoken, $mPushNotification);
+            echo $firebase->send($devicetoken, $mPushNotification);
         }
 
         function importDataFromCSV(){
@@ -717,8 +717,6 @@
                         $makemodels[] = $row;
                     }
                 }
-
-
                 echo "<pre>";
                 // print_r($makemodels);
                 $make = '';
