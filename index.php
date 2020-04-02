@@ -135,11 +135,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $updateCount = $restModel->updateAgent($data['name'],$data['mobile'],$data['email'], $data['company'], $data['location'], $data['id']);
-          if($updateCount > 0){
-            echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details updated successfully."]);
-          } else {
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not updated"]);
-          }
+          echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details updated successfully."]);
         } else {
           echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
         }
@@ -397,11 +393,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
             $updateCount = $restModel->updateProfile($data['name'], $data['company'], $data['location'], $user['id']);
-            if($updateCount > 0){
-              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Profile updated successfully."]);
-            } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Profile not updated"]);
-            }
+            echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Profile updated successfully."]);
           }
         } else {
           echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
