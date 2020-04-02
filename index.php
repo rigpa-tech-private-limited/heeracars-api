@@ -50,7 +50,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $user = $restModel->verifyOTP($data['otp'],$data['mobile']);
         $hashed_password = password_hash($data['otp'], PASSWORD_BCRYPT, array('cost'=>5));
         if($user!=null && count($user)>0) {
-          $updateCount = $restModel->updateToken($data['otp'],$hashed_password);
+          $push_token = '';
+          if(isset($data['device_token'])){
+            $push_token = $data['device_token'];
+          }
+          $updateCount = $restModel->updateToken($data['otp'],$hashed_password,$push_token);
           if($updateCount>0){
             $user['token'] = $hashed_password;
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$user]);
@@ -110,6 +114,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             } else { 
               $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location']);
               if($insertFlag){
+                $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email']);
                 echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
               } else {
                 echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
@@ -187,7 +192,12 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $agents = $restModel->resetAgentLogin($data['id']);
-          echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents]);
+          if(count($agents) > 0){
+            $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email']);
+            echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents,"message"=>"Confirmation mail sent successfully."]);
+          } else {
+            echo json_encode(["status"=>'error', "status_code"=>"401", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
+          }
         } else {
           echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
         }
@@ -584,7 +594,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       //   echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Problem in Importing CSV Data"]);
       // }
       // $makemodels = $restModel->getallMakeModelData();
-      $makemodels = $restModel->sendWelcomeMail('Vinoth Kumar');
+      // $sendMail = $restModel->sendWelcomeMail('Vinoth','orvinothkumar@gmail.com');
       
     }
 

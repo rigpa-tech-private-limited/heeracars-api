@@ -2,7 +2,7 @@
     require_once('database.php');
     require_once('Firebase.php');
     require_once('Push.php');
-    require_once 'mailer/class.phpmailer.php';
+    require_once('mailer/class.phpmailer.php');
     Class RESTAPIModel{
         function get_all_user_list()
         {
@@ -78,12 +78,12 @@
             return $user;
         }
 
-        function updateToken($otp,$hashed_password){
+        function updateToken($otp,$hashed_password,$push_token){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."' WHERE otp = '" . $otp . "'");
+                $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."', push_token='".$push_token."' WHERE otp = '" . $otp . "'");
                 $count  = mysqli_affected_rows($conn);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -267,7 +267,7 @@
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count > 0){
-                    $query = mysqli_query($conn, "SELECT email,mobile,password,token,otp FROM users WHERE id='".$id."' AND role='agent' AND active!='2'");
+                    $query = mysqli_query($conn, "SELECT name,email,mobile,password,token,otp FROM users WHERE id='".$id."' AND role='agent' AND active!='2'");
                     $user = mysqli_fetch_assoc($query);
                 }
             } catch (Exception $e) {
@@ -353,6 +353,19 @@
             return $variantYears;
         }
 
+        function getPushTokenByUserID($id){
+            $user  = [];
+            try {
+                $Dbobj = new DbConnection(); 
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT name,push_token FROM users WHERE id = '$id' AND active='1'");
+                $user = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+           return $user;
+        }
+
         function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color,$fuel_type,$car_kms,$car_owner,$is_replacement,$structural_damage,$structural_damage_desc,$insurance_date,$refurbishment_cost,$requested_price){
             
             $$last_id  = '';
@@ -362,6 +375,14 @@
                 $sql = "INSERT INTO quotations ( user_id, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color,fuel_type,car_kms,car_owner,is_replacement,structural_damage,structural_damage_desc,insurance_date,refurbishment_cost,requested_price,created_on ) VALUES ('$user_id', '$make_id', '$make_display', '$model_id', '$model_display', '$year_id', '$year', '$variant_id', '$variant_display','$car_color','$fuel_type','$car_kms','$car_owner','$is_replacement','$structural_damage','$structural_damage_desc','$insurance_date','$refurbishment_cost','$requested_price',NOW())";
                 $query = mysqli_query($conn, $sql);
                 $last_id = mysqli_insert_id($conn);
+                if($last_id>0){
+                    $user = $this->getPushTokenByUserID($user_id);
+                    if(count($user)>0){
+                        $title = "Quotation Request";
+                        $message = "New quotation has been rquested by ".$user['name'];
+                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
@@ -378,6 +399,14 @@
                 $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', status = '1' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
+                if($count>0){
+                    $user = $this->getPushTokenByUserID($user_id);
+                    if(count($user)>0){
+                        $title = "Quotation Approval";
+                        $message = "Quotation:".$id." has been approved by ".$user['name'];
+                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
@@ -393,6 +422,14 @@
                 $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', status = '2' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
+                if($count>0){
+                    $user = $this->getPushTokenByUserID($user_id);
+                    if(count($user)>0){
+                        $title = "Quotation Rejection";
+                        $message = "Quotation:".$id." has been rejected by ".$user['name'];
+                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
@@ -615,7 +652,7 @@
             return $count;
         }
 
-        function sendSinglePush($title, $message, $imagePath=''){
+        function sendSinglePush($title, $message, $imagePath='',$device_token){
             //creating a new push
             $push = null; 
             //first check if the push has an image with it
@@ -638,7 +675,7 @@
             $mPushNotification = $push->getPush(); 
 
             //getting the token from database object 
-            $devicetoken = array('eiW2dqLz8As:APA91bHt3s4R1cn2ji2DV8WxLdnu7QKHP9hNDxUa7DRRA5NbI6q8vn4dfxiJTHE9uCcB2sYOkSHwJuEZ6kaSgv3SbYMMgx1mYqJWU9khQ1QJnjQP9iuDb63GW2UBgEtYQ3yHW8xcK7BO',"eARc3nz_2yo:APA91bFObTeQxwDKoj-C4n0-LtJGdkYrk6NVVzJWR8s-OsOeJJ-jErOmMwbwnwykp3hucrqNPpmpqFmLns8RQydI-5Oad_8b6cNPE-QitVIRZTi3CpQRrh7YzEk00gbzn_Q_bKl83IP6");
+            $devicetoken = array($device_token);
 
             //creating firebase class object 
             $firebase = new Firebase(); 
@@ -754,66 +791,70 @@
             return $makemodels;
         }
 
-        function sendWelcomeMail($name){
-            $mail = new PHPMailer(true);
-            $full_name  = strip_tags($name);
-            $message  = "<html><body>";
+        function sendWelcomeMail($name,$toMail=''){
+            if($toMail!=''){
+                $mail = new PHPMailer(true);
+                $full_name  = strip_tags($name);
+                $message  = "<html><body>";
 
-            $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
+                $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
 
-            $message .= "<tr><td>";
+                $message .= "<tr><td>";
 
-            $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
-                        <tr height="80">
-                            <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
-                            <img src="https://3.bp.blogspot.com/-FKW8zsE_d0Y/VWXP9vw6DnI/AAAAAAAAOKs/EmSDAbLduXg/s200/Screen%2BShot%2B2015-05-27%2Bat%2B7.37.52%2Bpm.JPG" alt="AU Grad School" style="height:auto;width:auto" class="CToWUd">
-                            </th>
-                        </tr>
-                        </thead><tbody>
+                $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
+                            <tr height="80">
+                                <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
+                                <img src="https://3.bp.blogspot.com/-FKW8zsE_d0Y/VWXP9vw6DnI/AAAAAAAAOKs/EmSDAbLduXg/s200/Screen%2BShot%2B2015-05-27%2Bat%2B7.37.52%2Bpm.JPG" alt="AU Grad School" style="height:auto;width:auto" class="CToWUd">
+                                </th>
+                            </tr>
+                            </thead><tbody>
 
-                        <tr>
-                            <td colspan="4" style="padding:15px;">
-                                <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
-                                <p style="font-size:15px">Hi VinothKumar,</p>
-                                <p style="font-size:15px">Your account has now been created and you can log in by using your mobile number in our mobile app.</p>
-                                <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
-                                <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
-                                <p style="font-size:15px;margin: 0;">Thanks</p>
-                            <p style="font-size:15px;margin: 5px 0;">Heera Cars Team</p>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td colspan="4" style="padding:15px;">
+                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
+                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                    <p style="font-size:15px">Your account has now been created and you can log in by using your mobile number in our mobile app and start using our services.</p>
+                                    <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
+                                    <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
+                                    <p style="font-size:15px;margin: 0;">Thanks</p>
+                                <p style="font-size:15px;margin: 5px 0;">Heera Cars Team</p>
+                                </td>
+                            </tr>
 
-                        </tbody></table>';
+                            </tbody></table>';
 
-            $message .= "</td></tr>";
-            $message .= "</table>";
+                $message .= "</td></tr>";
+                $message .= "</table>";
 
-            $message .= "</body></html>";
-            try {
-                $mail->IsSMTP();
-                $mail->isHTML(true);
-                $mail->SMTPDebug  = 0;
-                $mail->SMTPAuth   = true;
-                $mail->SMTPSecure = "ssl";
-                $mail->Host       = "smtp.gmail.com";
-                $mail->Port       = 465;
-                // $mail->AddAddress('connect@rigpa.in');
-                $mail->AddAddress('vinoth@rigpa.in');
-                $mail->Username   ="orvinothkumar@gmail.com";
-                $mail->Password   ="vino15Raj@";
-                $mail->SetFrom('connect@rigpa.in', 'Heera Cars');
-                $mail->Subject    = "Welcome to Heera Cars!";
-                $mail->Body 	  = $message;
-                $mail->AltBody    = $message;
-                if ($mail->Send()) {
-                    $msg = "Mail was successfully sent";
-                    $status = "success";
+                $message .= "</body></html>";
+                try {
+                    $mail->IsSMTP();
+                    $mail->isHTML(true);
+                    $mail->SMTPDebug  = 0;
+                    $mail->SMTPAuth   = true;
+                    $mail->SMTPSecure = "ssl";
+                    $mail->Host       = "smtp.gmail.com";
+                    $mail->Port       = 465;
+                    // $mail->AddAddress('maha@rigpa.in');
+                    $mail->AddAddress($toMail);
+                    $mail->Username   ="vinoth@rigpa.in";
+                    $mail->Password   ="vinoth@1506";
+                    $mail->SetFrom('vinoth@rigpa.in', 'Heera Cars');
+                    $mail->Subject    = "Heera Cars - Your Account has been created successfully!";
+                    $mail->Body 	  = $message;
+                    $mail->AltBody    = $message;
+                    if ($mail->Send()) {
+                        $msg = "Mail was successfully sent";
+                        $status = "success";
+                    }
+                } catch (phpmailerException $ex) {
+                    $msg = $ex->errorMessage();
+                    $status = "error";
                 }
-            } catch (phpmailerException $ex) {
-                $msg = $ex->errorMessage();
-                $status = "error";
+                return array("status"=>$status,"msg"=>$msg);
+            } else {
+                return array("status"=>'error',"msg"=>'invalid mobile number');
             }
-            echo json_encode(array("status"=>$status,"msg"=>$msg));
         }
     }
 ?>
