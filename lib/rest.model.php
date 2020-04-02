@@ -196,7 +196,7 @@
                 $conn = $Dbobj->getdbconnect();
                 $sql = "UPDATE users SET name = '".$name."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
-                $count  = mysqli_affected_rows($conn);
+                $count = mysqli_affected_rows($conn);
                 
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";

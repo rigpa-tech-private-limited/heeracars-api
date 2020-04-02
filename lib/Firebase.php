@@ -15,7 +15,7 @@ class Firebase {
     * and then the message is sent 
     */
     private function sendPushNotification($fields) {
-        echo 'FIREBASE_API_KEY'.FIREBASE_API_KEY;
+        // echo 'FIREBASE_API_KEY'.FIREBASE_API_KEY;
         //firebase server url to send the curl request
         $url = 'https://fcm.googleapis.com/fcm/send';
  
