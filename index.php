@@ -134,7 +134,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $updateCount = $restModel->updateAgent($data['name'], $data['company'], $data['location'], $data['id']);
+          $updateCount = $restModel->updateAgent($data['name'],$data['mobile'],$data['email'], $data['company'], $data['location'], $data['id']);
           if($updateCount > 0){
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details updated successfully."]);
           } else {
