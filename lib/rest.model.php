@@ -1,7 +1,8 @@
 <?php
     require_once('database.php');
     require_once('Firebase.php');
-    require_once('Push.php'); 
+    require_once('Push.php');
+    require_once 'mailer/class.phpmailer.php';
     Class RESTAPIModel{
         function get_all_user_list()
         {
@@ -281,7 +282,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM car_make WHERE status='Active' ORDER BY display_order DESC");
+                $query = mysqli_query($conn, "SELECT make_id,make_name,make_display,logo, CASE WHEN is_popular = '1' THEN 'yes' ELSE 'no' END AS is_popular, display_order, status FROM car_make WHERE status='1' ORDER BY display_order DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -300,7 +301,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM car_model WHERE make_id='".$make_id."' AND status='Active' ORDER BY display_order DESC");
+                $query = mysqli_query($conn, "SELECT model_id,make_id,model_name,model_display, CASE WHEN is_popular = '1' THEN 'yes' ELSE 'no' END AS is_popular, display_order, status FROM car_model WHERE make_id='".$make_id."' AND status='1' ORDER BY display_order DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -314,42 +315,42 @@
             return $models;
         }
 
-        function getModelYears($model_id){
-            $modelYears = [];
+        function getModelVariants($model_id){
+            $modelVariants = [];
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM car_variant_year WHERE model_id='".$model_id."' AND status='Active' ORDER BY display_order DESC");
+                $query = mysqli_query($conn, "SELECT * FROM car_variant WHERE model_id='".$model_id."' AND status='1' ORDER BY display_order DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
-                        $modelYears[] = $row;
+                        $modelVariants[] = $row;
                     }
                 }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
-            return $modelYears;
+            return $modelVariants;
         }
 
-        function getModelYearVariants($model_id,$year_id){
-            $modelYearVariants = [];
+        function getVariantYears($variant_id){
+            $variantYears = [];
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM car_fuel_variant WHERE model_id='".$model_id."' AND year_id='".$year_id."' AND status='Active' ORDER BY display_order DESC");
+                $query = mysqli_query($conn, "SELECT * FROM car_year WHERE variant_id='".$variant_id."' AND status='1' ORDER BY display_order DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
-                        $modelYearVariants[] = $row;
+                        $variantYears[] = $row;
                     }
                 }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
-            return $modelYearVariants;
+            return $variantYears;
         }
 
         function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color,$fuel_type,$car_kms,$car_owner,$is_replacement,$structural_damage,$structural_damage_desc,$insurance_date,$refurbishment_cost,$requested_price){
@@ -746,14 +747,73 @@
                     }
                     }
                 }
-
-
-
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
             return $makemodels;
+        }
+
+        function sendWelcomeMail($name){
+            $mail = new PHPMailer(true);
+            $full_name  = strip_tags($name);
+            $message  = "<html><body>";
+
+            $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
+
+            $message .= "<tr><td>";
+
+            $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
+                        <tr height="80">
+                            <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
+                            <img src="https://3.bp.blogspot.com/-FKW8zsE_d0Y/VWXP9vw6DnI/AAAAAAAAOKs/EmSDAbLduXg/s200/Screen%2BShot%2B2015-05-27%2Bat%2B7.37.52%2Bpm.JPG" alt="AU Grad School" style="height:auto;width:auto" class="CToWUd">
+                            </th>
+                        </tr>
+                        </thead><tbody>
+
+                        <tr>
+                            <td colspan="4" style="padding:15px;">
+                                <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
+                                <p style="font-size:15px">Hi VinothKumar,</p>
+                                <p style="font-size:15px">Your account has now been created and you can log in by using your mobile number in our mobile app.</p>
+                                <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
+                                <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
+                                <p style="font-size:15px;margin: 0;">Thanks</p>
+                            <p style="font-size:15px;margin: 5px 0;">Heera Cars Team</p>
+                            </td>
+                        </tr>
+
+                        </tbody></table>';
+
+            $message .= "</td></tr>";
+            $message .= "</table>";
+
+            $message .= "</body></html>";
+            try {
+                $mail->IsSMTP();
+                $mail->isHTML(true);
+                $mail->SMTPDebug  = 0;
+                $mail->SMTPAuth   = true;
+                $mail->SMTPSecure = "ssl";
+                $mail->Host       = "smtp.gmail.com";
+                $mail->Port       = 465;
+                // $mail->AddAddress('connect@rigpa.in');
+                $mail->AddAddress('vinoth@rigpa.in');
+                $mail->Username   ="orvinothkumar@gmail.com";
+                $mail->Password   ="vino15Raj@";
+                $mail->SetFrom('connect@rigpa.in', 'Heera Cars');
+                $mail->Subject    = "Welcome to Heera Cars!";
+                $mail->Body 	  = $message;
+                $mail->AltBody    = $message;
+                if ($mail->Send()) {
+                    $msg = "Mail was successfully sent";
+                    $status = "success";
+                }
+            } catch (phpmailerException $ex) {
+                $msg = $ex->errorMessage();
+                $status = "error";
+            }
+            echo json_encode(array("status"=>$status,"msg"=>$msg));
         }
     }
 ?>
