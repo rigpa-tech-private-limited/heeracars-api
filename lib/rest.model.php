@@ -177,7 +177,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."', updated_on='NOW()' WHERE id = '" . $id . "'";
+                $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 
@@ -194,7 +194,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE users SET name = '".$name."', company =  '".$company."', location =  '".$location."', updated_on='NOW()' WHERE id = '" . $id . "'";
+                $sql = "UPDATE users SET name = '".$name."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 
