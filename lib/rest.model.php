@@ -681,7 +681,7 @@
             $firebase = new Firebase(); 
 
             //sending push notification and displaying result 
-            echo $firebase->send($devicetoken, $mPushNotification);
+            $firebase->send($devicetoken, $mPushNotification);
         }
 
         function importDataFromCSV(){
