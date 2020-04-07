@@ -569,16 +569,8 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT COUNT(q.user_id) as total_quotations FROM quotations q WHERE q.user_id = ".$id);
+                $query = mysqli_query($conn, "SELECT COUNT(*) as total_quotations,'0' as approved_quotations,'0' as rejected_quotations FROM quotations q WHERE q.user_id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
-                if(count($quotation)>0){
-                    $images = $this->getQuotationImages($quotation['id']);
-                    if(count($images)>0){
-                        $quotation['images'] = $images;
-                    } else {
-                        $quotation['images'] = [];
-                    }
-                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
