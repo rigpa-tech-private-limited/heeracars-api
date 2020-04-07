@@ -438,15 +438,12 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='getQuotationsCount'){
-      if(isset($data['token'])){
+      if(isset($data['token']) && isset($data['user_id'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $user = $restModel->getUserByToken($data['token']);
-          if(count($user) > 0){
-            $quotation = $restModel->getQuotationsCount($user['id']);
-            echo json_encode(["status"=>'success', "status_code"=>"200", 'quotation_details'=>$quotation]);
-          }
+          $quotation = $restModel->getQuotationsCount($data['user_id']);
+          echo json_encode(["status"=>'success', "status_code"=>"200", 'quotation_details'=>$quotation]);
         } else {
           echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
         }
