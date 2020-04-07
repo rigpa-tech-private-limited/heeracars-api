@@ -199,7 +199,7 @@
             }
         }
 
-        function addAgent($name, $mobile, $email, $company, $location,$pin){
+        function addAgent($name, $mobile, $email='', $company='', $location='',$pin=''){
             
             $insertFlag  = false;
             try {
@@ -214,7 +214,7 @@
             return $insertFlag;
         }
 
-        function updateAgent($name, $mobile, $email, $company="", $location="",$id){
+        function updateAgent($name, $mobile, $email="", $company="", $location="",$id){
             
             $count  = 0;
             try {
@@ -285,7 +285,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,active FROM users WHERE role='agent' AND active!='2'");
+                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,password as pin,active FROM users WHERE role='agent' AND active!='2'");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -548,6 +548,28 @@
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name,u.company, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price, IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'-') as approved_by, q.approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'-') as dropped_by, q.dropped_date, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
+                $quotation = mysqli_fetch_assoc($query);
+                if(count($quotation)>0){
+                    $images = $this->getQuotationImages($quotation['id']);
+                    if(count($images)>0){
+                        $quotation['images'] = $images;
+                    } else {
+                        $quotation['images'] = [];
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $quotation;
+        }
+
+        function getQuotationsCount($id){
+            $quotation = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT COUNT(q.user_id) as total_quotations FROM quotations q WHERE q.user_id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
                 if(count($quotation)>0){
                     $images = $this->getQuotationImages($quotation['id']);
