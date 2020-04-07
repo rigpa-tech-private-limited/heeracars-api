@@ -850,7 +850,7 @@
             if($toMail!=''){
                 $mail = new PHPMailer(true);
                 $full_name  = strip_tags($name);
-
+                $ConditionalmailContent = '';
                 if($resetFlag==0){
                     $ConditionalmailContent = '<tr>
                                                 <td colspan="4" style="padding:15px;">
