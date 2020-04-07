@@ -270,7 +270,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "DELETE FROM users WHERE id = '" . $id . "'";
+                $sql = "UPDATE users SET active = '2' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
             } catch (Exception $e) {
