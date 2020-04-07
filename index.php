@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -67,6 +67,43 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
+    if($data['service_name']=='validateMobileNumber'){
+      if(isset($data['mobile1'])){
+        $restModel = new RESTAPIModel();
+        $user = $restModel->validateMobileNumber($data['mobile1'],$data['mobile2']);
+        if($user!=null && count($user)>0) {
+          echo json_encode(["status"=>'success', "status_code"=>"200", 'mobile_number'=>$user['mobile']]);
+        } else {
+          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid Mobile Number(s)!"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='validatePin'){
+      if(isset($data['pin']) && isset($data['mobile'])){
+        $restModel = new RESTAPIModel();
+        $user = $restModel->validatePin($data['mobile'],$data['pin']);
+        $hashed_password = password_hash($data['pin'], PASSWORD_BCRYPT, array('cost'=>5));
+        if($user!=null && count($user)>0) {
+          $push_token = '';
+          if(isset($data['device_token'])){
+            $push_token = $data['device_token'];
+          }
+          $updateCount = $restModel->updateTokenByPin($data['pin'],$hashed_password,$push_token);
+          if($updateCount>0){
+            $user['token'] = $hashed_password;
+            echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$user]);
+          }
+        } else {
+          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid PIN!"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+      }
+    }
+
     if($data['service_name']=='listAgents'){
       if(isset($data['token'])){
         $restModel = new RESTAPIModel();
@@ -112,7 +149,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($mobileValidation || ($mobileValidation==1)){
               echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Mobile number already exists."]);
             } else { 
-              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location']);
+              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['pin']);
               if($insertFlag){
                 $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email']);
                 echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);

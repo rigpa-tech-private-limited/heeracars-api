@@ -78,12 +78,55 @@
             return $user;
         }
 
+        function validateMobileNumber($mobile1,$mobile2=''){
+            $user = null;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT mobile FROM users WHERE (mobile='".$mobile1."' OR mobile='".$mobile2."') AND active='1'");
+                $user = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $user;
+        }
+
+        function validatePin($mobile,$pin){
+            $user = null;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE (mobile='".$mobile."' AND password='".$pin."') AND active='1'");
+                $user = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $user;
+        }
+
         function updateToken($otp,$hashed_password,$push_token){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."', push_token='".$push_token."' WHERE otp = '" . $otp . "'");
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+
+
+        function updateTokenByPin($pin,$hashed_password,$push_token){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."', push_token='".$push_token."' WHERE password = '" . $pin . "'");
                 $count  = mysqli_affected_rows($conn);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
