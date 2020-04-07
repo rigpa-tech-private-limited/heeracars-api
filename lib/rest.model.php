@@ -199,12 +199,12 @@
             }
         }
 
-        function addAgent($name, $mobile, $email, $company, $location){
+        function addAgent($name, $mobile, $email, $company, $location,$pin){
             
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                $sql = "INSERT INTO users ( name, mobile, email, company, location, role, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', 'agent', NOW())";
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, password, role, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$pin', 'agent', NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
@@ -299,18 +299,18 @@
             return $agents;
         }
 
-        function resetAgentLogin($id){
+        function resetAgentPin($id){
             $user = [];
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $otp = rand(100000,999999);
-                $hashed_password = password_hash($otp, PASSWORD_BCRYPT, array('cost'=>5));
-                $sql = "UPDATE users SET password = 'heera@123', token = '".$hashed_password."', otp = '".$otp."', is_expired = 1 WHERE id = '" . $id . "'";
+                $pin = rand(1000,9999);
+                $hashed_password = password_hash($pin, PASSWORD_BCRYPT, array('cost'=>5));
+                $sql = "UPDATE users SET password = '".$pin."', token = '".$hashed_password."', is_expired = 1 WHERE id = '" . $id . "'";
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count > 0){
-                    $query = mysqli_query($conn, "SELECT name,email,mobile,password,token,otp FROM users WHERE id='".$id."' AND role='agent' AND active!='2'");
+                    $query = mysqli_query($conn, "SELECT name,email,mobile,password as pin,token,otp FROM users WHERE id='".$id."' AND active!='2'");
                     $user = mysqli_fetch_assoc($query);
                 }
             } catch (Exception $e) {
@@ -832,10 +832,33 @@
             return $makemodels;
         }
 
-        function sendWelcomeMail($name,$toMail=''){
+        function sendWelcomeMail($name,$toMail='',$pin='',$resetFlag=0){
             if($toMail!=''){
                 $mail = new PHPMailer(true);
                 $full_name  = strip_tags($name);
+
+                if($resetFlag==0){
+                    $ConditionalmailContent = '<tr>
+                                                <td colspan="4" style="padding:15px;">
+                                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
+                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                                    <p style="font-size:15px">Your account has now been created and you can log in by using secret pin : '.$pin.' in our mobile app and start using our services.</p>
+                                                    <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
+                                                    <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
+                                                    <p style="font-size:15px;margin: 0;">Thanks</p>
+                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
+                                                </td>
+                                            </tr>';
+                } else {
+                    $ConditionalmailContent = '<tr>
+                                                <td colspan="4" style="padding:15px;">
+                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                                    <p style="font-size:15px">Your account has been reset and you can log in by using new secret pin : '.$pin.'.</p>
+                                                    <p style="font-size:15px;margin: 0;">Thanks</p>
+                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
+                                                </td>
+                                            </tr>';
+                }
                 $message  = "<html><body>";
 
                 $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
@@ -850,17 +873,7 @@
                             </tr>
                             </thead><tbody>
 
-                            <tr>
-                                <td colspan="4" style="padding:15px;">
-                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
-                                    <p style="font-size:15px">Hi '.$full_name.',</p>
-                                    <p style="font-size:15px">Your account has now been created and you can log in by using your mobile number in our mobile app and start using our services.</p>
-                                    <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
-                                    <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
-                                    <p style="font-size:15px;margin: 0;">Thanks</p>
-                                <p style="font-size:15px;margin: 5px 0;">Heera Cars Team</p>
-                                </td>
-                            </tr>
+                            '.$ConditionalmailContent.'
 
                             </tbody></table>';
 

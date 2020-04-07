@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentLogin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetAgentPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","approveQuotation","rejectQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -148,10 +148,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             $mobileValidation = $restModel->validateMobile($data['mobile']);
             if($mobileValidation || ($mobileValidation==1)){
               echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Mobile number already exists."]);
-            } else { 
-              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['pin']);
+            } else {
+              $pin = rand(1000,9999);
+              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin);
               if($insertFlag){
-                $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email']);
+                $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
                 echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
               } else {
                 echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
@@ -219,14 +220,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
-    if($data['service_name']=='resetAgentLogin'){
+    if($data['service_name']=='resetAgentPin'){
       if(isset($data['id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-          $agents = $restModel->resetAgentLogin($data['id']);
+          $agents = $restModel->resetAgentPin($data['id']);
           if(count($agents) > 0){
-            $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email']);
+            $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents,"message"=>"Confirmation mail sent successfully."]);
           } else {
             echo json_encode(["status"=>'error', "status_code"=>"401", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
