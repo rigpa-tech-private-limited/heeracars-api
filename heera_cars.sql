@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Apr 02, 2020 at 06:51 AM
+-- Generation Time: Apr 08, 2020 at 09:54 AM
 -- Server version: 5.7.26
 -- PHP Version: 7.4.2
 
@@ -66789,6 +66789,23 @@ INSERT INTO `make_model` (`id`, `vehicle`, `make`, `model`, `variant`, `year`) V
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `notifications`
+--
+
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL,
+  `sender_id` int(11) NOT NULL,
+  `type` varchar(500) DEFAULT NULL,
+  `title` varchar(500) DEFAULT NULL,
+  `message` text,
+  `recipient_id` int(11) NOT NULL,
+  `is_unread` tinyint(1) NOT NULL DEFAULT '0',
+  `created_on` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `quotations`
 --
 
@@ -66815,7 +66832,9 @@ CREATE TABLE `quotations` (
   `requested_price` decimal(10,2) NOT NULL DEFAULT '0.00',
   `approved_price` decimal(10,2) DEFAULT '0.00',
   `approved_by` int(50) NOT NULL DEFAULT '0',
+  `approved_date` datetime DEFAULT NULL,
   `dropped_by` int(50) NOT NULL DEFAULT '0',
+  `dropped_date` datetime DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT '0',
   `created_on` datetime DEFAULT NULL,
   `updated_on` datetime DEFAULT CURRENT_TIMESTAMP
@@ -66864,6 +66883,7 @@ CREATE TABLE `users` (
   `location` varchar(100) DEFAULT NULL,
   `password` varchar(60) DEFAULT NULL,
   `token` varchar(100) DEFAULT NULL,
+  `push_token` varchar(200) DEFAULT NULL,
   `otp` bigint(6) DEFAULT NULL,
   `is_expired` int(1) NOT NULL DEFAULT '0',
   `role` varchar(50) DEFAULT NULL,
@@ -66876,10 +66896,10 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `company`, `location`, `password`, `token`, `otp`, `is_expired`, `role`, `active`, `created_on`, `updated_on`) VALUES
-(1, 'Vinoth', 'vinoth@rigpa.in', 8190075138, 'Heera Cars', 'Chennai', 'heera@123', '$2y$05$aZNoneScrGqLdcNBwYIA0uIOplf0PkU56CMoU3aqNpuygQiOfcg0i', 909797, 1, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
-(2, 'Karthik', 'karthik@rigpa.io', 7448666351, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
-(3, 'Maha', 'maha@rigpa.in', 9677030281, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31');
+INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `company`, `location`, `password`, `token`, `push_token`, `otp`, `is_expired`, `role`, `active`, `created_on`, `updated_on`) VALUES
+(1, 'Vinoth', 'vinoth@rigpa.in', 8190075138, 'Heera Cars', 'Chennai', 'heera@123', '$2y$05$aZNoneScrGqLdcNBwYIA0uIOplf0PkU56CMoU3aqNpuygQiOfcg0i', NULL, 909797, 1, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
+(2, 'Karthik', 'karthik@rigpa.io', 7448666351, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
+(3, 'Maha', 'maha@rigpa.in', 9677030281, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31');
 
 --
 -- Indexes for dumped tables
@@ -66913,6 +66933,12 @@ ALTER TABLE `car_year`
 -- Indexes for table `make_model`
 --
 ALTER TABLE `make_model`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `notifications`
+--
+ALTER TABLE `notifications`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -66974,6 +67000,12 @@ ALTER TABLE `car_year`
 --
 ALTER TABLE `make_model`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3211;
+
+--
+-- AUTO_INCREMENT for table `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `quotations`
