@@ -614,7 +614,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
 
-  $allowedAPIs = array("getUserInfo","uploadImage","sendPush","importCSV");
+  $allowedAPIs = array("getUserInfo","uploadImage","sendPush","importCSV","resetPin");
 
 
   if(isset($_GET['service_name']) && $_GET['service_name']!='' && in_array($_GET['service_name'], $allowedAPIs)){
@@ -637,6 +637,22 @@ if($_SERVER['REQUEST_METHOD']=="GET")
         echo json_encode(["status"=>"success", "status_code"=>"200","target_path"=>$target_path, "message"=>"There was an error uploading the file, please try again!"]);
       }
       
+    }
+
+
+    if($_GET['service_name']=='resetPin'){
+      if(isset($_GET['user_id'])){
+        $restModel = new RESTAPIModel();
+          $agents = $restModel->resetAgentPin($_GET['user_id']);
+          if(count($agents) > 0){
+            $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
+            echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents,"message"=>"Confirmation mail sent successfully."]);
+          } else {
+            echo json_encode(["status"=>'error', "status_code"=>"401", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
+          }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+      }
     }
 
     if($_GET['service_name']=='sendPush'){

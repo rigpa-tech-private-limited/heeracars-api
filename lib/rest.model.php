@@ -317,9 +317,8 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $pin = rand(1000,9999);
-                $hashed_password = password_hash($pin, PASSWORD_BCRYPT, array('cost'=>5));
-                $sql = "UPDATE users SET password = '".$pin."', token = '".$hashed_password."', is_expired = 1 WHERE id = '" . $id . "' AND active!='2'";
+                $pin = $this->generateUniquePIN();
+                $sql = "UPDATE users SET password = '".$pin."', token = '', is_expired = 0 WHERE id = '" . $id . "' AND active!='2'";
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count > 0){
