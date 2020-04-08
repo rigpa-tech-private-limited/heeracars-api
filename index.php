@@ -359,13 +359,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='rejectQuotation'){
-      if(isset($data['quotation_id']) && isset($data['token'])){
+      if(isset($data['quotation_id']) && isset($data['token']) && isset($data['reason'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $updateCount = $restModel->rejectQuotation($data['quotation_id'],$user['id']);
+            $updateCount = $restModel->rejectQuotation($data['quotation_id'],$user['id'],$data['reason']);
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation rejected."]);
             } else {
