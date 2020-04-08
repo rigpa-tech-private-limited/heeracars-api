@@ -646,7 +646,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
           $agents = $restModel->resetAgentPin($_GET['user_id']);
           if(count($agents) > 0){
             // $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
-            echo json_encode(["status"=>'success', "status_code"=>"200", 'pin'=>$agents['pin']]);
+            echo json_encode(["status"=>'success', "status_code"=>"200", 'pin'=>$agents]);
           } else {
             echo json_encode(["status"=>'error', "status_code"=>"401", "message"=>"Reset failed."]);
           }
