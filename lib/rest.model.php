@@ -4,6 +4,19 @@
     require_once('Push.php');
     require_once('mailer/class.phpmailer.php');
     Class RESTAPIModel{
+
+        function generateUniquePIN(){
+            $regenerateNumber = true;
+            do {
+                $regNum      = rand(1000,9999);
+                $checkRegNum = "SELECT * FROM users WHERE password = '$regNum'";
+                $result      = mysqli_query($connection, $checkRegNum);
+                if (mysqli_num_rows($result) == 0) {
+                    $regenerateNumber = false;
+                }
+            } while ($regenerateNumber);
+            return $regNum;
+        }
         function get_all_user_list()
         {
             $users = [];
@@ -92,12 +105,12 @@
             return $user;
         }
 
-        function validatePin($mobile,$pin){
+        function validatePin($pin){
             $user = null;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE (mobile='".$mobile."' AND password='".$pin."') AND active='1'");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -169,7 +182,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE email = '$email' AND active!='2'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE email = '$email'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -186,7 +199,7 @@
             $count  = 0;
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile' AND active!='2'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT * FROM users WHERE mobile = '$mobile'");
                 $count  = mysqli_num_rows($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -285,7 +298,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,password as pin,active FROM users WHERE role='agent' AND active!='2'");
+                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,password as pin,active FROM users WHERE role='agent'");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -306,7 +319,7 @@
                 $conn = $Dbobj->getdbconnect();
                 $pin = rand(1000,9999);
                 $hashed_password = password_hash($pin, PASSWORD_BCRYPT, array('cost'=>5));
-                $sql = "UPDATE users SET password = '".$pin."', token = '".$hashed_password."', is_expired = 1 WHERE id = '" . $id . "'";
+                $sql = "UPDATE users SET password = '".$pin."', token = '".$hashed_password."', is_expired = 1 WHERE id = '" . $id . "' AND active!='2'";
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count > 0){
@@ -409,7 +422,7 @@
            return $user;
         }
 
-        function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color,$fuel_type,$car_kms,$car_owner,$is_replacement,$structural_damage,$structural_damage_desc,$insurance_date,$refurbishment_cost,$requested_price){
+        function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price=''){
             
             $$last_id  = '';
             try {
@@ -851,7 +864,9 @@
                 $mail = new PHPMailer(true);
                 $full_name  = strip_tags($name);
                 $ConditionalmailContent = '';
+                $ConditionalMailSubject = '';
                 if($resetFlag==0){
+                    $ConditionalMailSubject = "Heera Cars - Your Account has been created successfully!";
                     $ConditionalmailContent = '<tr>
                                                 <td colspan="4" style="padding:15px;">
                                                     <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
@@ -864,6 +879,7 @@
                                                 </td>
                                             </tr>';
                 } else {
+                    $ConditionalMailSubject = "Heera Cars - Your Account has been reset successfully!";
                     $ConditionalmailContent = '<tr>
                                                 <td colspan="4" style="padding:15px;">
                                                     <p style="font-size:15px">Hi '.$full_name.',</p>
@@ -908,7 +924,7 @@
                     $mail->Username   ="vinoth@rigpa.in";
                     $mail->Password   ="vinoth@1506";
                     $mail->SetFrom('vinoth@rigpa.in', 'Heera Cars');
-                    $mail->Subject    = "Heera Cars - Your Account has been created successfully!";
+                    $mail->Subject    = $ConditionalMailSubject;
                     $mail->Body 	  = $message;
                     $mail->AltBody    = $message;
                     if ($mail->Send()) {

@@ -82,9 +82,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='validatePin'){
-      if(isset($data['pin']) && isset($data['mobile'])){
+      if(isset($data['pin'])){
         $restModel = new RESTAPIModel();
-        $user = $restModel->validatePin($data['mobile'],$data['pin']);
+        $user = $restModel->validatePin($data['pin']);
         $hashed_password = password_hash($data['pin'], PASSWORD_BCRYPT, array('cost'=>5));
         if($user!=null && count($user)>0) {
           $push_token = '';
@@ -152,7 +152,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               if($emailValidation || ($emailValidation==1)){
                 echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Email ID already exists."]);
               } else {
-                $pin = rand(1000,9999);
+                $pin = $restModel->generateUniquePIN();
                 $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin);
                 if($insertFlag){
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
@@ -162,7 +162,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                 }
               }
             } else {
-              $pin = rand(1000,9999);
+              $pin = $restModel->generateUniquePIN();
               $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], '', $data['company'], $data['location'], $pin);
               if($insertFlag){
                 $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
