@@ -511,7 +511,7 @@
                 if($sort_by != ''){
                     $condition .= " ORDER BY q.created_on ".$sort_by;
                 }
-                $sql = "SELECT q.id, q.user_id, u.name,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'-') as approved_by, q.approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'-') as dropped_by, q.dropped_date, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
+                $sql = "SELECT q.id, q.user_id, u.name,u.role,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'-') as approved_by, q.approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'-') as dropped_by, q.dropped_date, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,(q.created_on) as created_date FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
@@ -519,6 +519,7 @@
                         $images = $this->getQuotationImages($row['id']);
                         if(count($images)>0){
                             $row['images'] = $images;
+                            $row['created_date'] = $this->time_elapsed_string($row['created_date']);
                         } else {
                             $row['images'] = [];
                         }
