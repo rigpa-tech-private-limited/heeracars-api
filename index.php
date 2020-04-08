@@ -645,10 +645,10 @@ if($_SERVER['REQUEST_METHOD']=="GET")
         $restModel = new RESTAPIModel();
           $agents = $restModel->resetAgentPin($_GET['user_id']);
           if(count($agents) > 0){
-            $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
-            echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents,"message"=>"Confirmation mail sent successfully."]);
+            // $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
+            echo json_encode(["status"=>'success', "status_code"=>"200", 'pin'=>$agents['pin']]);
           } else {
-            echo json_encode(["status"=>'error', "status_code"=>"401", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
+            echo json_encode(["status"=>'error', "status_code"=>"401", "message"=>"Reset failed."]);
           }
       } else {
         echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
