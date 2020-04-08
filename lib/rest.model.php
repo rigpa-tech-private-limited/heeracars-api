@@ -516,10 +516,10 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
+                        $row['created_date'] = $this->time_elapsed_string($row['created_date']);
                         $images = $this->getQuotationImages($row['id']);
                         if(count($images)>0){
                             $row['images'] = $images;
-                            $row['created_date'] = $this->time_elapsed_string($row['created_date']);
                         } else {
                             $row['images'] = [];
                         }
