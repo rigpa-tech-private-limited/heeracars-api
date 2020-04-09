@@ -317,7 +317,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id);
+                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."'");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
