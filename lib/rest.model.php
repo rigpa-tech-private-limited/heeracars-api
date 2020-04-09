@@ -317,7 +317,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."'");
+                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."' ORDER BY n.created_on DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -339,7 +339,7 @@
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $pin = $this->generateUniquePIN();
-                $sql = "UPDATE users SET password = '".$pin."', token = '', is_expired = 0 WHERE id = '" . $id . "' AND active!='2'";
+                $sql = "UPDATE users SET password = '".$pin."', token = '', is_expired = '0' WHERE id = '" . $id . "' AND active!='2'";
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count > 0){
