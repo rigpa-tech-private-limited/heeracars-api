@@ -153,22 +153,28 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                 echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Email ID already exists."]);
               } else {
                 $pin = $restModel->generateUniquePIN();
-                $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin);
+                $user = $restModel->getUserByToken($data['token']);
+                if(count($user) > 0){
+                  $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin, $user['id']);
+                  if($insertFlag){
+                    $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
+                    echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
+                  } else {
+                    echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
+                  }
+                }
+              }
+            } else {
+              $pin = $restModel->generateUniquePIN();
+              $user = $restModel->getUserByToken($data['token']);
+              if(count($user) > 0){
+                $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], '', $data['company'], $data['location'], $pin, $user['id']);
                 if($insertFlag){
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
                   echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
                 } else {
                   echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
                 }
-              }
-            } else {
-              $pin = $restModel->generateUniquePIN();
-              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], '', $data['company'], $data['location'], $pin);
-              if($insertFlag){
-                $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
-                echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
-              } else {
-                echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
               }
             }
             
@@ -315,13 +321,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='addQuotations'){
-      if(isset($data['make_id']) &&  isset($data['make_display']) && isset($data['model_id']) && isset($data['model_display']) &&  isset($data['year_id']) &&  isset($data['year']) &&  isset($data['variant_id']) &&  isset($data['variant_display']) && isset($data['car_color']) && isset($data['fuel_type']) && isset($data['car_kms']) && isset($data['car_owner']) && isset($data['is_replacement']) && isset($data['structural_damage']) && isset($data['structural_damage_desc']) && isset($data['insurance_date']) && isset($data['refurbishment_cost']) && isset($data['requested_price']) && isset($data['token'])){
+      if(isset($data['make_id']) &&  isset($data['make_display']) && isset($data['model_id']) && isset($data['model_display']) &&  isset($data['year_id']) &&  isset($data['year']) &&  isset($data['variant_id']) &&  isset($data['variant_display']) && isset($data['car_color']) && isset($data['fuel_type']) && isset($data['car_kms']) && isset($data['car_owner']) && isset($data['is_replacement']) && isset($data['structural_damage']) && isset($data['structural_damage_desc']) && isset($data['insurance_date']) && isset($data['refurbishment_cost']) && isset($data['requested_price']) && isset($data['recipient_id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $insertID = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price']);
+            $insertID = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id']);
             if($insertID!=''){
               echo json_encode(["status"=>"success", "status_code"=>"200","quotation_id"=>$insertID, "message"=>"Quotation request sent successfully."]);
             } else {
@@ -337,13 +343,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='approveQuotation'){
-      if(isset($data['quotation_id']) && isset($data['approved_price']) && isset($data['token'])){
+      if(isset($data['quotation_id']) && isset($data['approved_price']) && isset($data['recipient_id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $updateCount = $restModel->approveQuotation($data['quotation_id'],$data['approved_price'],$user['id']);
+            $updateCount = $restModel->approveQuotation($data['quotation_id'],$data['approved_price'],$user['id'],$data['recipient_id']);
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation approved."]);
             } else {
@@ -359,15 +365,37 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='rejectQuotation'){
-      if(isset($data['quotation_id']) && isset($data['token']) && isset($data['reason'])){
+      if(isset($data['quotation_id']) && isset($data['token']) && isset($data['recipient_id']) && isset($data['reason'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $updateCount = $restModel->rejectQuotation($data['quotation_id'],$user['id'],$data['reason']);
+            $updateCount = $restModel->rejectQuotation($data['quotation_id'],$user['id'],$data['reason'],$data['recipient_id']);
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation rejected."]);
+            } else {
+              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"rejection failed"]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='soldQuotation'){
+      if(isset($data['quotation_id']) && isset($data['recipient_id']) && isset($data['token']) && isset($data['reason'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $updateCount = $restModel->soldQuotation($data['quotation_id'],$user['id'],$data['reason'],$data['recipient_id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation sold."]);
             } else {
               echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"rejection failed"]);
             }
@@ -471,13 +499,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='addComments'){
-      if(isset($data['quotation_id']) && isset($data['comments']) && isset($data['token'])){
+      if(isset($data['quotation_id']) && isset($data['comments']) && isset($data['recipient_id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $insertFlag = $restModel->addQuotationComments($user['id'], $data['quotation_id'], $data['comments']);
+            $insertFlag = $restModel->addQuotationComments($user['id'], $data['quotation_id'], $data['comments'], $data['recipient_id']);
             if($insertFlag){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation comments added successfully."]);
             } else {
