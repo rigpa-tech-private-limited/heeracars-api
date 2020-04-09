@@ -672,7 +672,7 @@
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     $title = "Comment";
                     $message = "Quotation comment added by ".$user['name'];
-                    $addNotify = $this->addNotifications($user_id, 'quotation', $title, $message, $recipient_id);
+                    $addNotify = $this->addNotifications($user_id, 'comment', $title, $message, $recipient_id);
                     if(count($user)>0){
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
