@@ -649,7 +649,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT COUNT(*) as total_quotations,'0' as approved_quotations,'0' as rejected_quotations FROM quotations q WHERE q.user_id = ".$id);
+                $query = mysqli_query($conn, "SELECT COUNT(*) as total_quotations,IFNULL(sum(case when approved_by = '1' then 1 else 0 end),0) as approved_quotations,IFNULL(sum(case when dropped_by = '1' then 1 else 0 end),0) as admin_rejected_quotations,IFNULL(sum(case when dropped_by = '".$id."' then 1 else 0 end),0) as admin_rejected_quotations FROM quotations q WHERE q.user_id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
