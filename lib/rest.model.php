@@ -520,7 +520,7 @@
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);
                     if(count($user)>0){                    
                         $title = "Quotation Rejection";
-                        $message = "Quotation:".$id." has been rejected by ".$user['name'];
+                        $message = "Quotation: (ID#:".$id.") has been rejected by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
@@ -667,7 +667,7 @@
                 $insertFlag  = $query;
                 $last_id = mysqli_insert_id($conn);
                 if($last_id>0){
-                    $user = $this->getPushTokenByUserID($recipient_id);
+                    $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     $title = "Comment";
                     $message = "Quotation comment added by ".$user['name'];
                     $addNotify = $this->addNotifications($user_id, 'quotation', $title, $message, $recipient_id);
