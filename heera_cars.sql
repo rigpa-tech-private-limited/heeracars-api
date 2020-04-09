@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Apr 08, 2020 at 09:54 AM
+-- Generation Time: Apr 09, 2020 at 04:05 PM
 -- Server version: 5.7.26
 -- PHP Version: 7.4.2
 
@@ -66834,6 +66834,7 @@ CREATE TABLE `quotations` (
   `approved_by` int(50) NOT NULL DEFAULT '0',
   `approved_date` datetime DEFAULT NULL,
   `dropped_by` int(50) NOT NULL DEFAULT '0',
+  `reason` text,
   `dropped_date` datetime DEFAULT NULL,
   `status` int(1) NOT NULL DEFAULT '0',
   `created_on` datetime DEFAULT NULL,
@@ -66888,6 +66889,7 @@ CREATE TABLE `users` (
   `is_expired` int(1) NOT NULL DEFAULT '0',
   `role` varchar(50) DEFAULT NULL,
   `active` int(1) NOT NULL DEFAULT '1',
+  `added_by` int(11) NOT NULL DEFAULT '0',
   `created_on` datetime DEFAULT NULL,
   `updated_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -66896,10 +66898,8 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `company`, `location`, `password`, `token`, `push_token`, `otp`, `is_expired`, `role`, `active`, `created_on`, `updated_on`) VALUES
-(1, 'Vinoth', 'vinoth@rigpa.in', 8190075138, 'Heera Cars', 'Chennai', 'heera@123', '$2y$05$aZNoneScrGqLdcNBwYIA0uIOplf0PkU56CMoU3aqNpuygQiOfcg0i', NULL, 909797, 1, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
-(2, 'Karthik', 'karthik@rigpa.io', 7448666351, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31'),
-(3, 'Maha', 'maha@rigpa.in', 9677030281, 'Heera Cars', 'Chennai', 'heera@123', NULL, NULL, NULL, 0, 'admin', 1, '2020-03-26 13:05:31', '2020-03-26 13:05:31');
+INSERT INTO `users` (`id`, `name`, `email`, `mobile`, `company`, `location`, `password`, `token`, `push_token`, `otp`, `is_expired`, `role`, `active`, `added_by`, `created_on`, `updated_on`) VALUES
+(1, 'Admin', 'admin@heeracars.com', 9876543210, 'Heera Cars', 'Chennai', '1234', '', NULL, 123456, 1, 'admin', 1, 0, '2020-04-09 21:34:39', '2020-04-09 21:34:39');
 
 --
 -- Indexes for dumped tables
@@ -67029,4 +67029,4 @@ ALTER TABLE `quotation_images`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
