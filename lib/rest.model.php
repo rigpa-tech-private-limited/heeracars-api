@@ -574,6 +574,8 @@
                 }                
                 if($sort_by != ''){
                     $condition .= " ORDER BY q.created_on ".$sort_by;
+                } else {
+                    $condition .= " ORDER BY q.created_on DESC";
                 }
                 $sql = "SELECT q.id, q.user_id, u.name,u.role,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by,IFNULL((SELECT au.role FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by_role,DATE_FORMAT(q.approved_date, '%d %b %Y') as approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by, IFNULL((SELECT du.role FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by_role, DATE_FORMAT(q.dropped_date, '%d %b %Y') as dropped_date,reason, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,DATE_FORMAT(q.created_on, '%d %b %Y') as created_date FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
                 $query = mysqli_query($conn, $sql);

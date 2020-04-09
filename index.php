@@ -30,17 +30,17 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           // try {
           //     $result = $textlocal->sendSms($numbers, $message, $sender);
           // } catch (Exception $e) {
-          //     echo json_encode(["status"=>"error","status_code"=>"401", "message"=>$e->getMessage()]);
+          //     echo json_encode(["status"=>"error","status_code"=>"402", "message"=>$e->getMessage()]);
           // }
           $updateCount = $restModel->updateOTP($otp,$mobile);
           if($updateCount>0){
             echo json_encode(["status"=>'success', "status_code"=>"200", "message"=>'OTP : '.$otp]);
           }
         } else {
-          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid Mobile Number"]);
+          echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid Mobile Number"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -60,10 +60,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$user]);
           }
         } else {
-          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid OTP!"]);
+          echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid OTP!"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -74,10 +74,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         if($user!=null && count($user)>0) {
           echo json_encode(["status"=>'success', "status_code"=>"200", 'mobile_number'=>$user['mobile']]);
         } else {
-          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid Mobile Number(s)!"]);
+          echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid Mobile Number(s)!"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -97,10 +97,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$user]);
           }
         } else {
-          echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid PIN!"]);
+          echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid PIN!"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -112,10 +112,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $agents = $restModel->getAllAgentsList();
           echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -129,10 +129,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>"success", "status_code"=>"200", "user_id"=>$user['id'],  "message"=>"valid token."]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -144,13 +144,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
 
           $mobileValidation = $restModel->validateMobile($data['mobile']);
           if($mobileValidation || ($mobileValidation==1)){
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Mobile number already exists."]);
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Mobile number already exists."]);
           } else {
 
             if(isset($data['email'])){
               $emailValidation = $restModel->validateEmail($data['email']);
               if($emailValidation || ($emailValidation==1)){
-                echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Email ID already exists."]);
+                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Email ID already exists."]);
               } else {
                 $pin = $restModel->generateUniquePIN();
                 $user = $restModel->getUserByToken($data['token']);
@@ -160,7 +160,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                     $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
                     echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
                   } else {
-                    echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
+                    echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
                   }
                 }
               }
@@ -173,17 +173,17 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
                   echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
                 } else {
-                  echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Agent details not added."]);
+                  echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
                 }
               }
             }
             
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -195,10 +195,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $updateCount = $restModel->updateAgent($data['name'],$data['mobile'],$data['email'], $data['company'], $data['location'], $data['id']);
           echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details updated successfully."]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -211,13 +211,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($updateCount > 0){
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"status changed."]);
           } else {
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"status not updated"]);
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"status not updated"]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -230,13 +230,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($updateCount > 0){
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"agent removed."]);
           } else {
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"agent not removed"]);
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"agent not removed"]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -250,13 +250,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents,"message"=>"Confirmation mail sent successfully."]);
           } else {
-            echo json_encode(["status"=>'error', "status_code"=>"401", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
+            echo json_encode(["status"=>'error', "status_code"=>"402", 'user'=>$agents,"message"=>"Confirmation mail not sent."]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
     
@@ -268,10 +268,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $brands = $restModel->getBrands();
           echo json_encode(["status"=>'success', "status_code"=>"200", 'brands'=>$brands]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -283,10 +283,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $models = $restModel->getModels($data['make_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'models'=>$models]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -298,10 +298,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $variantYears = $restModel->getVariantYears($data['variant_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'variantYears'=>$variantYears]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -313,10 +313,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $modelVariants = $restModel->getModelVariants($data['model_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'modelVariants'=>$modelVariants]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -331,14 +331,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($insertID!=''){
               echo json_encode(["status"=>"success", "status_code"=>"200","quotation_id"=>$insertID, "message"=>"Quotation request sent successfully."]);
             } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation request not sent."]);
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation request not sent."]);
             }
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -353,14 +353,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation approved."]);
             } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Approval faild"]);
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Approval faild"]);
             }
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -375,14 +375,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation rejected."]);
             } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"rejection failed"]);
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"rejection failed"]);
             }
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -397,14 +397,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation sold."]);
             } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"rejection failed"]);
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"rejection failed"]);
             }
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -419,10 +419,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications'=>$notifications]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -461,10 +461,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>'success', "status_code"=>"200", 'quotations'=>$allQuotations]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -476,10 +476,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $quotation = $restModel->getQuotationDetail($data['quotation_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'quotation'=>$quotation]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -491,10 +491,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $quotation = $restModel->getQuotationsCount($data['user_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'quotation_details'=>$quotation]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -509,10 +509,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Profile updated successfully."]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -527,14 +527,14 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($insertFlag){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation comments added successfully."]);
             } else {
-              echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation comments not added."]);
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation comments not added."]);
             }
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -547,13 +547,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($updateCount > 0){
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation comments updated successfully."]);
           } else {
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation comments not updated"]);
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation comments not updated"]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -566,13 +566,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($updateCount > 0){
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation comments deleted successfully."]);
           } else {
-            echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation comments not deleted"]);
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation comments not deleted"]);
           }
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -584,10 +584,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $allComments = $restModel->getAllQuotationComments($data['quotation_id']);
           echo json_encode(["status"=>'success', "status_code"=>"200", 'comments'=>$allComments]);
         } else {
-          echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -610,15 +610,15 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               if($insertID!=''){
                 echo json_encode(["status"=>"success", "status_code"=>"200","image_id"=>$insertID, "message"=>"Quotation image uploaded successfully."]);
               } else {
-                echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation image not uploaded."]);
+                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation image not uploaded."]);
               }
             }
           } else {
-            echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+            echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
           }
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -640,20 +640,20 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               if($updateCount > 0){
                 echo json_encode(["status"=>"success", "status_code"=>"200","image_id"=>$data['image_id'], "message"=>"Quotation image updated successfully."]);
               } else {
-                echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Quotation image not updated"]);
+                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation image not updated"]);
               }
             }
           } else {
-            echo json_encode(["status"=>"error", "status_code"=>"403", "message"=>"Invalid Token"]);
+            echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
           }
         }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
   } else {
-    echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Web service not available"]);
+    echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Web service not available"]);
   }
 }
 
@@ -694,10 +694,10 @@ if($_SERVER['REQUEST_METHOD']=="GET")
             // $sendMail = $restModel->sendWelcomeMail($agents['name'],$agents['email'],$agents['pin'],1);
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$agents]);
           } else {
-            echo json_encode(["status"=>'error', "status_code"=>"401", "message"=>"Reset failed."]);
+            echo json_encode(["status"=>'error', "status_code"=>"402", "message"=>"Reset failed."]);
           }
       } else {
-        echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Invalid parameters"]);
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
       }
     }
 
@@ -712,7 +712,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       // if($status=='success'){
       //   echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"CSV Data Imported into the Database"]);
       // } else {
-      //   echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Problem in Importing CSV Data"]);
+      //   echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Problem in Importing CSV Data"]);
       // }
       // $makemodels = $restModel->getallMakeModelData();
       // $sendMail = $restModel->sendWelcomeMail('Vinoth','orvinothkumar@gmail.com');
@@ -738,7 +738,7 @@ if($_SERVER['REQUEST_METHOD']=="GET")
       }
     }
   } else {
-    echo json_encode(["status"=>"error","status_code"=>"401", "message"=>"Web service not available"]);
+    echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Web service not available"]);
   }
   
 }
