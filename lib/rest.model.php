@@ -321,6 +321,8 @@
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
+                        
+                        $row['created_on'] = $this->time_elapsed_string($row['created_on']);
                         $notifications[] = $row;
                     }
                 }
