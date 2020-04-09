@@ -312,6 +312,25 @@
             return $agents;
         }
 
+        function getNotifications($recipient_id=''){
+            $notifications = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id);
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $notifications[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $notifications;
+        }
+
         function resetAgentPin($id){
             $user = [];
             try {
@@ -412,7 +431,7 @@
             $user  = [];
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id') as name,push_token FROM users WHERE id = '$recipient_id' AND active='1'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id' LIMIT 1) as name,push_token FROM users WHERE id = '$recipient_id' AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
