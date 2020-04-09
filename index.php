@@ -158,7 +158,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                   $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin, $user['id']);
                   if($insertFlag){
                     $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
-                    echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
+                    echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
                   } else {
                     echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
                   }
@@ -171,7 +171,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
                 $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], '', $data['company'], $data['location'], $pin, $user['id']);
                 if($insertFlag){
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
-                  echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Agent details added successfully."]);
+                  echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
                 } else {
                   echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
                 }
