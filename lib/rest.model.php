@@ -298,7 +298,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,password as pin,active FROM users WHERE role='agent'");
+                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,password as pin,active FROM users WHERE role='agent' ORDER BY active DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
