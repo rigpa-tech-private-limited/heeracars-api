@@ -975,7 +975,6 @@
                 $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
                             <tr height="80">
                                 <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
-                                <img src="https://3.bp.blogspot.com/-FKW8zsE_d0Y/VWXP9vw6DnI/AAAAAAAAOKs/EmSDAbLduXg/s200/Screen%2BShot%2B2015-05-27%2Bat%2B7.37.52%2Bpm.JPG" alt="AU Grad School" style="height:auto;width:auto" class="CToWUd">
                                 </th>
                             </tr>
                             </thead><tbody>
