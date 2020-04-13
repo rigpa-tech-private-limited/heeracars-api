@@ -461,6 +461,21 @@
            return $user;
         }
 
+        function addNotifications($sender_id,$quotation_id, $type, $title, $message, $recipient_id=''){
+            $$last_id  = '';
+            try {
+                $Dbobj = new DbConnection(); 
+                $conn = $Dbobj->getdbconnect();
+                $sql = "INSERT INTO notifications ( sender_id, quotation_id, type, title, message, recipient_id,created_on ) VALUES ('$sender_id', '$quotation_id', '$type', '$title', '$message', '$recipient_id',NOW())";
+                $query = mysqli_query($conn, $sql);
+                $last_id = mysqli_insert_id($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $last_id;
+        }
+
         function addQuotations($user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0'){
             
             $$last_id  = '';
@@ -486,19 +501,30 @@
             return $last_id;
         }
 
-        function addNotifications($sender_id,$quotation_id, $type, $title, $message, $recipient_id=''){
-            $$last_id  = '';
+
+        function editQuotation($quotation_id, $user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0'){
+            $count  = 0;
             try {
-                $Dbobj = new DbConnection(); 
+                $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "INSERT INTO notifications ( sender_id, quotation_id, type, title, message, recipient_id,created_on ) VALUES ('$sender_id', '$quotation_id', '$type', '$title', '$message', '$recipient_id',NOW())";
+                $currentDate = date("Y/m/d");
+                $sql = "UPDATE quotations SET make_id='".$make_id."', make_display='".$make_display."', model_id='".$model_id."', model_display='".$model_display."', year_id='".$year_id."', year='".$year."', variant_id='".$variant_id."', variant_display='".$variant_display."', car_color='".$car_color."',fuel_type='".$fuel_type."',car_kms='".$car_kms."',car_owner='".$car_owner."',is_replacement='".$is_replacement."',structural_damage='".$structural_damage."',structural_damage_desc='".$structural_damage_desc."',insurance_date='".$insurance_date."',refurbishment_cost='".$refurbishment_cost."',requested_price='".$requested_price."' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
-                $last_id = mysqli_insert_id($conn);
+                $count  = mysqli_affected_rows($conn);
+                if($count>0){
+                    $user = $this->getPushTokenByUserID($user_id,$recipient_id);
+                    if(count($user)>0){
+                        $title = "Quotation Updation";
+                        $message = "Quotation (ID#:".$quotation_id.") has been updated by ".$user['name'];
+                        $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
+                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                    }
+                }
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
                 die();
             }
-            return $last_id;
+            return $count;
         }
 
         function resubmitQuotation($quotation_id,$requested_price,$user_id='0',$recipient_id='0'){

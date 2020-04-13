@@ -342,6 +342,29 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
+
+    if($data['service_name']=='editQuotation'){
+      if(isset($data['quotation_id']) && isset($data['make_id']) &&  isset($data['make_display']) && isset($data['model_id']) && isset($data['model_display']) &&  isset($data['year_id']) &&  isset($data['year']) &&  isset($data['variant_id']) &&  isset($data['variant_display']) && isset($data['car_color']) && isset($data['fuel_type']) && isset($data['car_kms']) && isset($data['car_owner']) && isset($data['is_replacement']) && isset($data['structural_damage']) && isset($data['structural_damage_desc']) && isset($data['insurance_date']) && isset($data['refurbishment_cost']) && isset($data['requested_price']) && isset($data['recipient_id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $updateCount = $restModel->editQuotation($data['quotation_id'], $user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation updated."]);
+            } else {
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Updation faild"]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
     if($data['service_name']=='approveQuotation'){
       if(isset($data['quotation_id']) && isset($data['approved_price']) && isset($data['recipient_id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
