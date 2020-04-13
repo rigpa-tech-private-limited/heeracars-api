@@ -507,7 +507,7 @@
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE quotations SET requested_price='".$requested_price."',approved_price='0', approved_by='0', approved_date='NULL', dropped_by='0', dropped_date='NULL', reason = '', status = '0' WHERE id = '" . $quotation_id . "'";
+                echo $sql = "UPDATE quotations SET requested_price='".$requested_price."',approved_price='0', approved_by='0', approved_date='NULL', dropped_by='0', dropped_date='NULL', reason = '', status = '0' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
