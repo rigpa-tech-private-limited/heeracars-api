@@ -338,7 +338,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT COUNT(*) as notifications_count FROM notifications WHERE recipient_id = '".$recipient_id);
+                $query = mysqli_query($conn, "SELECT COUNT(*) as notifications_count FROM notifications WHERE recipient_id = '".$recipient_id."'");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
