@@ -333,6 +333,25 @@
             return $notifications;
         }
 
+        function getNotificationsCount($recipient_id=''){
+            $notifications = [];
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $query = mysqli_query($conn, "SELECT COUNT(*) as notifications_count FROM notifications WHERE recipient_id = '".$recipient_id);
+                $count  = mysqli_num_rows($query);
+                if ($count > 0) {
+                    while($row = mysqli_fetch_assoc($query)) {
+                        $notifications[] = $row;
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $notifications;
+        }
+
         function resetAgentPin($id){
             $user = [];
             try {
