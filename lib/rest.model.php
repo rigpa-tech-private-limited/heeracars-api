@@ -317,7 +317,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT n.sender_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."' ORDER BY n.created_on DESC");
+                $query = mysqli_query($conn, "SELECT n.sender_id,n.quotation_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."' ORDER BY n.created_on DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -456,7 +456,7 @@
                     if(count($user)>0){
                         $title = "Quotation Request";
                         $message = "New quotation has been requested by ".$user['name'];
-                        $addNotify = $this->addNotifications($user_id, 'quotation', $title, $message, $recipient_id);
+                        $addNotify = $this->addNotifications($user_id, $last_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
                 }
@@ -467,12 +467,12 @@
             return $last_id;
         }
 
-        function addNotifications($sender_id, $type, $title, $message, $recipient_id=''){
+        function addNotifications($sender_id,$quotation_id, $type, $title, $message, $recipient_id=''){
             $$last_id  = '';
             try {
                 $Dbobj = new DbConnection(); 
                 $conn = $Dbobj->getdbconnect();
-                $sql = "INSERT INTO notifications ( sender_id, type, title, message, recipient_id,created_on ) VALUES ('$sender_id', '$type', '$title', '$message', '$recipient_id',NOW())";
+                $sql = "INSERT INTO notifications ( sender_id, quotation_id, type, title, message, recipient_id,created_on ) VALUES ('$sender_id', '$quotation_id', '$type', '$title', '$message', '$recipient_id',NOW())";
                 $query = mysqli_query($conn, $sql);
                 $last_id = mysqli_insert_id($conn);
             } catch (Exception $e) {
@@ -482,21 +482,21 @@
             return $last_id;
         }
 
-        function approveQuotation($id,$approved_price,$approved_by=0,$recipient_id='0'){
+        function approveQuotation($quotation_id,$approved_price,$approved_by=0,$recipient_id='0'){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', approved_date=DATE('".$currentDate."'), status = '1' WHERE id = '" . $id . "'";
+                $sql = "UPDATE quotations SET approved_price='".$approved_price."', approved_by='".$approved_by."', approved_date=DATE('".$currentDate."'), status = '1' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
                     $user = $this->getPushTokenByUserID($approved_by,$recipient_id);
                     if(count($user)>0){
                         $title = "Quotation Approval";
-                        $message = "Quotation (ID#:".$id.") has been approved by ".$user['name'];
-                        $addNotify = $this->addNotifications($approved_by, 'quotation', $title, $message, $recipient_id);
+                        $message = "Quotation (ID#:".$quotation_id.") has been approved by ".$user['name'];
+                        $addNotify = $this->addNotifications($approved_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
                 }
@@ -507,21 +507,21 @@
             return $count;
         }
 
-        function rejectQuotation($id,$dropped_by=0,$reason='',$recipient_id='0'){
+        function rejectQuotation($quotation_id,$dropped_by=0,$reason='',$recipient_id='0'){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', dropped_date=DATE('".$currentDate."'), reason = '".$reason."', status = '2' WHERE id = '" . $id . "'";
+                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', dropped_date=DATE('".$currentDate."'), reason = '".$reason."', status = '2' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);
                     if(count($user)>0){                    
                         $title = "Quotation Rejection";
-                        $message = "Quotation: (ID#:".$id.") has been rejected by ".$user['name'];
-                        $addNotify = $this->addNotifications($dropped_by, 'quotation', $title, $message, $recipient_id);
+                        $message = "Quotation: (ID#:".$quotation_id.") has been rejected by ".$user['name'];
+                        $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
                 }
@@ -532,21 +532,21 @@
             return $count;
         }
 
-        function soldQuotation($id,$dropped_by=0,$reason='',$recipient_id='0'){
+        function soldQuotation($quotation_id,$dropped_by=0,$reason='',$recipient_id='0'){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', dropped_date=DATE('".$currentDate."'), reason = '".$reason."', status = '2' WHERE id = '" . $id . "'";
+                $sql = "UPDATE quotations SET dropped_by='".$dropped_by."', dropped_date=DATE('".$currentDate."'), reason = '".$reason."', status = '2' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);    
                     if(count($user)>0){                
                         $title = "Quotation Sold";
-                        $message = "Quotation:".$id." has been sold by ".$user['name'];
-                        $addNotify = $this->addNotifications($dropped_by, 'quotation', $title, $message, $recipient_id);
+                        $message = "Quotation:".$quotation_id." has been sold by ".$user['name'];
+                        $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
                 }
@@ -672,7 +672,7 @@
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     $title = "Comment";
                     $message = "Quotation comment added by ".$user['name'];
-                    $addNotify = $this->addNotifications($user_id, 'comment', $title, $message, $recipient_id);
+                    $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id);
                     if(count($user)>0){
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
