@@ -435,7 +435,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if(count($user) > 0){
             $notifications = $restModel->getNotificationsCount($user['id']);
             if(count($notifications)>0){
-              echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications_count'=>$notifications['notifications_count']]);
+              echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications_count'=>$notifications[0]['notifications_count']]);
             } else {
               echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications_count'=>0]);
             }
