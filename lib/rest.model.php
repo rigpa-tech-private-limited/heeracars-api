@@ -474,7 +474,7 @@
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     if(count($user)>0){
                         $title = "Quotation Request";
-                        $message = "New quotation has been requested by ".$user['name'];
+                        $message = "New quotation(ID#:".$quotation_id.") has been requested by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $last_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
@@ -499,6 +499,31 @@
                 die();
             }
             return $last_id;
+        }
+
+        function resubmitQuotation($quotation_id,$requested_price,$user_id='0',$recipient_id='0'){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $currentDate = date("Y/m/d");
+                $sql = "UPDATE quotations SET requested_price='".$requested_price."',approved_price='0', approved_by='0', approved_date='NULL', dropped_by='0', dropped_date='NULL', reason = '', status = '0' WHERE id = '" . $quotation_id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+                if($count>0){
+                    $user = $this->getPushTokenByUserID($user_id,$recipient_id);
+                    if(count($user)>0){
+                        $title = "Quotation Resubmit";
+                        $message = "Quotation (ID#:".$quotation_id.") has been resubmitted with new price ".$requested_price." by ".$user['name'];
+                        $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
+                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
         }
 
         function approveQuotation($quotation_id,$approved_price,$approved_by=0,$recipient_id='0'){
@@ -564,7 +589,7 @@
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);    
                     if(count($user)>0){                
                         $title = "Quotation Sold";
-                        $message = "Quotation:".$quotation_id." has been sold by ".$user['name'];
+                        $message = "Quotation: (ID#:".$quotation_id.") has been sold by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }

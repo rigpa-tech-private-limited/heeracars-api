@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
@@ -354,6 +354,28 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation approved."]);
             } else {
               echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Approval faild"]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='resubmitQuotation'){
+      if(isset($data['quotation_id']) && isset($data['requested_price']) && isset($data['recipient_id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $updateCount = $restModel->resubmitQuotation($data['quotation_id'],$data['requested_price'],$user['id'],$data['recipient_id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation resubmitted."]);
+            } else {
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Resubmission faild"]);
             }
           }
         } else {
