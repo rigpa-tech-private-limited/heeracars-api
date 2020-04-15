@@ -527,13 +527,13 @@
             return $count;
         }
 
-        function resubmitQuotation($quotation_id,$requested_price,$user_id='0',$recipient_id='0'){
+        function resubmitQuotation($quotation_id, $user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0'){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE quotations SET requested_price='".$requested_price."',approved_price='0', approved_by='0', approved_date=NULL, dropped_by='0', dropped_date=NULL, reason = '', status = '0' WHERE id = '" . $quotation_id . "'";
+                $sql = "UPDATE quotations SET make_id='".$make_id."', make_display='".$make_display."', model_id='".$model_id."', model_display='".$model_display."', year_id='".$year_id."', year='".$year."', variant_id='".$variant_id."', variant_display='".$variant_display."', car_color='".$car_color."',fuel_type='".$fuel_type."',car_kms='".$car_kms."',car_owner='".$car_owner."',is_replacement='".$is_replacement."',structural_damage='".$structural_damage."',structural_damage_desc='".$structural_damage_desc."',insurance_date='".$insurance_date."',refurbishment_cost='".$refurbishment_cost."',requested_price='".$requested_price."',approved_price='0', approved_by='0', approved_date=NULL, dropped_by='0', dropped_date=NULL, reason = '', status = '0' WHERE id = '" . $quotation_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
