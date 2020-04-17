@@ -233,7 +233,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
+                echo $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 
@@ -489,7 +489,7 @@
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     if(count($user)>0){
                         $title = "Quotation Request";
-                        $message = "New quotation(ID#:".$quotation_id.") has been requested by ".$user['name'];
+                        $message = "New quotation(ID#:".$last_id.") has been requested by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $last_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
@@ -615,7 +615,7 @@
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);    
                     if(count($user)>0){                
                         $title = "Quotation Sold";
-                        $message = "Quotation: (ID#:".$quotation_id.") has been sold by ".$user['name'];
+                        $message = "Quotation: (ID#:".$quotation_id.") has been marked as sold by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
                         $this->sendSinglePush($title, $message,'',$user['push_token']);
                     }
