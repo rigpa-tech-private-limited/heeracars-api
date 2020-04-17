@@ -141,43 +141,23 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
-
           $mobileValidation = $restModel->validateMobile($data['mobile']);
           if($mobileValidation || ($mobileValidation==1)){
             echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Mobile number already exists."]);
-          } else {
-
-            if(isset($data['email'])){
-              $emailValidation = $restModel->validateEmail($data['email']);
-              if($emailValidation || ($emailValidation==1)){
-                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Email ID already exists."]);
-              } else {
-                $pin = $restModel->generateUniquePIN();
-                $user = $restModel->getUserByToken($data['token']);
-                if(count($user) > 0){
-                  $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin, $user['id']);
-                  if($insertFlag){
-                    $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
-                    echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
-                  } else {
-                    echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
-                  }
-                }
-              }
-            } else {
-              $pin = $restModel->generateUniquePIN();
-              $user = $restModel->getUserByToken($data['token']);
-              if(count($user) > 0){
-                $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], '', $data['company'], $data['location'], $pin, $user['id']);
-                if($insertFlag){
+          } else {            
+            $pin = $restModel->generateUniquePIN();
+            $user = $restModel->getUserByToken($data['token']);
+            if(count($user) > 0){
+              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $pin, $user['id']);
+              if($insertFlag){
+                if($data['email']!=''){
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
-                  echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
-                } else {
-                  echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
                 }
+                echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
+              } else {
+                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
               }
             }
-            
           }
         } else {
           echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
