@@ -110,7 +110,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND is_expired='0'");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND ((role='agent' AND is_expired='0') OR (role='admin'))");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
