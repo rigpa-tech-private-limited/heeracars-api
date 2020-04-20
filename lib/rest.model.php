@@ -110,7 +110,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND ((role='agent' AND is_expired='0') OR (id=2) OR (role='admin'))");
+                $query = mysqli_query($conn, "SELECT * FROM users WHERE (password='".$pin."') AND active='1' AND ((role='agent' AND is_expired='0') OR (role='admin'))");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -373,7 +373,7 @@
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $pin = $this->generateUniquePIN();
-                $sql = "UPDATE users SET password = '".$pin."', token = '', is_expired = '0' WHERE id = '" . $id . "' AND role='agent' AND active!='2'";
+                $sql = "UPDATE users SET password = '".$pin."', token = '', is_expired = '0' WHERE id = '" . $id . "' AND role='agent' AND id!='2' AND active!='2'";
                 $updateQuery = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 $query = mysqli_query($conn, "SELECT name,email,mobile,password as pin,token,otp FROM users WHERE id='".$id."' AND active!='2'");
