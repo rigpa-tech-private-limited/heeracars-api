@@ -9,6 +9,9 @@ if($_SERVER['REQUEST_METHOD']=="POST")
   $allowedAPIs = array("addStudent","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
+  if($_REQUEST['service_name']=='validatePin'){
+    echo json_encode(["data"=>($_REQUEST)]);
+  }
   // echo json_encode(["data"=>($_REQUEST)]);
   if($_REQUEST['service_name']=='addStudent'){
     if(isset($_REQUEST['name']) && isset($_REQUEST['registration_no']) && isset($_REQUEST['phone']) && isset($_REQUEST['email'])){
