@@ -4,7 +4,7 @@ $tHost = "gateway.sandbox.push.apple.com";
 //$tHost = "gateway.push.apple.com";
 $tPort = 2195;
 // Provide the Certificate and Key Data.
-$tCert = "certificate.pem";
+$tCert = "certificate1.pem";
 $tPassphrase = "heeracars2020";
 $tToken = "9e29ce41187c9308d0f27b51a74bc54130e832f665c05bad5b9b0dc526ee6afc";
 // Audible Notification Option.
