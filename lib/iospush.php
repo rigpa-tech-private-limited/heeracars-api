@@ -16,7 +16,10 @@ $tPayload = "APNS payload";
 //Below code for non silent notification
 $tBody["aps"] = array(
 "badge" => +1,
-"alert" => "Test notification",
+"alert" => array(
+    "title"=> "Test Title",
+    "body"=> "This is test notification"
+),
 "sound" => "default"
 );
 $tBody ["payload"] = $tPayload;

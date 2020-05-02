@@ -504,7 +504,7 @@
                         $title = "Quotation Request";
                         $message = "New quotation(ID#:".$last_id.") has been requested by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $last_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -530,7 +530,7 @@
                         $title = "Quotation Updation";
                         $message = "Quotation (ID#:".$quotation_id.") has been updated by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -555,7 +555,7 @@
                         $title = "Quotation Resubmit";
                         $message = "Quotation (ID#:".$quotation_id.") has been resubmitted with new price ".$requested_price." by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -580,7 +580,7 @@
                         $title = "Quotation Approval";
                         $message = "Quotation (ID#:".$quotation_id.") has been approved by ".$user['name'];
                         $addNotify = $this->addNotifications($approved_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -605,7 +605,7 @@
                         $title = "Quotation Rejection";
                         $message = "Quotation: (ID#:".$quotation_id.") has been rejected by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -630,7 +630,7 @@
                         $title = "Quotation Sold";
                         $message = "Quotation: (ID#:".$quotation_id.") has been marked as sold by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -757,7 +757,7 @@
                     $message = "Quotation comment added by ".$user['name'];
                     $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id);
                     if(count($user)>0){
-                        $this->sendSinglePush($title, $message,'',$user['push_token']);
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }
                 }
             } catch (Exception $e) {
@@ -882,8 +882,56 @@
             return $count;
         }
 
-        function sendSinglePush($title, $message, $imagePath='',$device_token){
-            //creating a new push
+        function sendSinglePush($title, $message, $imagePath='',$device_token,$device_type){
+            if($device_type=='ios'){
+                // Provide the Host Information.
+                $tHost = "gateway.sandbox.push.apple.com";
+                //$tHost = "gateway.push.apple.com";
+                $tPort = 2195;
+                // Provide the Certificate and Key Data.
+                $tCert = "certificate.pem";
+                $tPassphrase = "heeracars2020";
+                $tToken = $device_token;
+                // Audible Notification Option.
+                $tSound = "default";
+                // The content that is returned by the LiveCode "pushNotificationReceived" message.
+                $tPayload = "APNS payload";
+                // Create the message content that is to be sent to the device.
+                // Create the payload body
+                //Below code for non silent notification
+                $tBody["aps"] = array(
+                "badge" => +1,
+                "alert" => array(
+                    "title"=> $title,
+                    "body"=> $message
+                ),
+                "sound" => "default"
+                );
+                $tBody ["payload"] = $tPayload;
+                // Encode the body to JSON.
+                $tBody = json_encode ($tBody);
+                // Create the Socket Stream.
+                $tContext = stream_context_create ();
+                stream_context_set_option ($tContext, "ssl", "local_cert", $tCert);
+                // Remove this line if you would like to enter the Private Key Passphrase manually.
+                stream_context_set_option ($tContext, "ssl", "passphrase", $tPassphrase);
+                // Open the Connection to the APNS Server.
+                $tSocket = stream_socket_client ("ssl://".$tHost.":".$tPort, $error, $errstr, 30, STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT, $tContext);
+                // Check if we were able to open a socket.
+                if (!$tSocket)
+                exit ("APNS Connection Failed: $error $errstr" . PHP_EOL);
+                // Build the Binary Notification.
+                $tMsg = chr (0) . chr (0) . chr (32) . pack ("H*", $tToken) . pack ("n", strlen ($tBody)) . $tBody;
+                // Send the Notification to the Server.
+                $tResult = fwrite ($tSocket, $tMsg, strlen ($tMsg));
+                if ($tResult)
+                echo "Delivered Message to APNS" . PHP_EOL;
+                else
+                echo "Could not Deliver Message to APNS" . PHP_EOL;
+                // Close the Connection to the Server.
+                fclose ($tSocket);
+            } else {
+            //creating a new push for android
             $push = null; 
             //first check if the push has an image with it
             if($imagePath!=''){
@@ -912,6 +960,7 @@
 
             //sending push notification and displaying result 
             $firebase->send($devicetoken, $mPushNotification);
+            }
         }
 
         function importDataFromCSV(){
