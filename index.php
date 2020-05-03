@@ -112,7 +112,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if(isset($data['device_token'])){
             $push_token = $data['device_token'];
           }
-          $updateCount = $restModel->updateTokenByPin($data['pin'],$hashed_password,$push_token);
+          $device_type = 'android';
+          if(isset($data['device_type'])){
+            $device_type = $data['device_type'];
+          }
+          $updateCount = $restModel->updateTokenByPin($data['pin'],$hashed_password,$push_token,$device_type);
           if($updateCount>0){
             $user['token'] = $hashed_password;
             echo json_encode(["status"=>'success', "status_code"=>"200", 'user'=>$user]);

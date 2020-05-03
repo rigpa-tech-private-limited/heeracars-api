@@ -134,12 +134,12 @@
         }
 
 
-        function updateTokenByPin($pin,$hashed_password,$push_token){
+        function updateTokenByPin($pin,$hashed_password,$push_token,$device_type){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."', push_token='".$push_token."' WHERE password = '" . $pin . "'");
+                $query = mysqli_query($conn, "UPDATE users SET is_expired = 1, token='".$hashed_password."', push_token='".$push_token."', device_type='".$device_type."' WHERE password = '" . $pin . "'");
                 $count  = mysqli_affected_rows($conn);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
