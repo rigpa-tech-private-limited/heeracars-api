@@ -78,7 +78,7 @@
 				<!-- Form -->
 				<div class="column">
 					<h3>Patient Form</h3>
-					<form action="#" method="post">
+					<div class="form">
 						<div class="field half first">
 							<label for="name">Name</label>
 							<input name="name" id="name" type="text" placeholder="Enter your name">
@@ -98,11 +98,11 @@
 							<label for="gender">Gender</label>
 							<div class="gender-radio-group">
 								<div>
-									<input type="radio" id="male" name="radio-group" checked>
+									<input type="radio" id="male" name="gender" value="male" checked>
 									<label for="male">Male</label>
 								</div>
 								<div>
-									<input type="radio" id="female" name="radio-group">
+									<input type="radio" id="female" name="gender" value="female">
 									<label for="female">Female</label>
 								</div>
 							</div>
@@ -137,9 +137,9 @@
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<ul class="actions">
-							<li><input value="Calculate" class="button" type="submit"></li>
+							<li><button class="form-submit button">Calculate</button></li>
 						</ul>
-					</form>
+					</div>
 				</div>
 
 				<!-- Social -->

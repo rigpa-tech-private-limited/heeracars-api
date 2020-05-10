@@ -59,7 +59,7 @@ ol,
 ul,
 li,
 fieldset,
-form,
+.form,
 label,
 legend,
 table,
@@ -598,7 +598,7 @@ button:disabled,
 	background: #ececec;
 }
 
-#contact form {
+#contact .form {
 	margin: 0;
 }
 
@@ -647,31 +647,31 @@ button:disabled,
 
 /* Form */
 
-form {
+.form {
 	margin: 0 0 2em 0;
 }
 
-form .field {
+.form .field {
 	margin-bottom: 1em;
 }
 
-form .field.half {
+.form .field.half {
 	display: inline-block;
 	width: 48%;
 }
 
-form .field.half.first {
+.form .field.half.first {
 	margin-right: 2.5%;
 }
 
 @media screen and (max-width: 980px) {
 
-	form .field.half {
+	.form .field.half {
 		display: block;
 		width: 100%;
 	}
 
-	form .field.half.first {
+	.form .field.half.first {
 		margin-right: 0;
 	}
 
@@ -1787,7 +1787,14 @@ body.is-loading #banner>.inner {
 
 .gender-radio-group {
 	display: flex;
-	min-height: 2.6em;
+	min-height: 2em;
+}
+
+.gender-radio-group div {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding: 5px 10px;
 }
 
 .gender-radio-group label {
@@ -1802,50 +1809,79 @@ body.is-loading #banner>.inner {
 .swal2-styled.swal2-confirm {
 	padding: 0 1em !important;
 }
-.result-help-txt{
+
+.result-help-txt {
 	font-size: 0.7em;
 }
+
 .diet-workout-holder {
-    display: flex;
+	display: flex;
 	align-items: center;
 	flex-direction: column;
 }
-.diet-holder,.workout-holder {
-    display: flex;
+
+.diet-holder,
+.workout-holder {
+	display: flex;
 	align-items: center;
 	flex-direction: row;
 	padding: 0 15px;
 	width: 100%;
+	border: 1px solid #ddd;
 }
-.diet-icon-div,.workout-icon-div {
-    width: 20%;
+
+.diet-icon-div,
+.workout-icon-div {
+	width: 20%;
+	height: fit-content;
+	display: flex;
+	align-items: stretch;
+	flex-direction: column;
+	flex: 1;
+	padding: 10px 0;
 }
-.diet-txt-div,.workout-txt-div{
-    width:75%;
-    padding: 5px 10px;
+
+.diet-txt-div,
+.workout-txt-div {
+	width: 75%;
+	padding: 5px 10px;
+	border-left: 1px solid #ddd;
 }
+
 .diet-workout-holder p {
-    font-size: 0.8em;
+	font-size: 0.8em;
 	margin: 0;
 	text-align: justify;
 }
+
 .diet-workout-holder h4 {
-    font-size: 1em;
+	font-size: 1em;
 	margin: 0;
 	text-align: center;
 }
+
 p.p-txt {
-    font-size: 0.7em;
-    text-align: left;
-    margin: 0;
+	font-size: 0.7em;
+	text-align: left;
+	margin: 0;
 }
+
 .popup-bottom-help-txt {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 5px 0;
-    margin: 0;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	padding: 5px 0;
+	margin: 0;
 }
+
+button.form-submit.button {
+    padding: 5px 10px;
+    min-height: 3em;
+    font-size: 0.8em;
+	line-height: 0;
+	text-transform: uppercase;
+}
+
 @media screen and (max-width: 768px) {
 
 	#generic {
