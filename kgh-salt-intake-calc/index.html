@@ -90,7 +90,7 @@
 							<label for="mobile">Mobile Number</label>
 							<input tabindex="2" name="mobile" id="mobile" type="text"
 								placeholder="Enter your mobile number" autocomplete="off"
-								onkeypress="return isNumber(event)">
+								onkeypress="return isNumber(event)" maxlength="10">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half first">
@@ -101,13 +101,20 @@
 						</div>
 						<div class="field half">
 							<label for="gender">Gender</label>
-							<div class="custom-select" id="gender" tabindex="4">
+							<!-- <div class="custom-select" id="gender" tabindex="4">
 								<select>
 									<option value="0">Select Gender</option>
 									<option value="1">Male</option>
 									<option value="2">Female</option>
 								</select>
-							</div>
+							</div> -->
+							<div class="styled-select">
+								<select id="gender" tabindex="4">
+									<option value="Male">Male</option>
+									<option value="Female">Female</option>
+								</select>
+							   <span class="fa fa-sort-desc"></span>
+							 </div>
 							<!-- <div class="gender-radio-group">
 								<div>
 									<input type="radio" id="male" name="gender" value="male" checked>
@@ -123,7 +130,7 @@
 						<div class="field half first">
 							<label for="age">Age ( in years )</label>
 							<input name="age" id="age" type="text" placeholder="Enter your age " autocomplete="off"
-								class="decimal">
+								class="decimal" maxlength="3">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
@@ -135,7 +142,7 @@
 						<div class="field half first">
 							<label for="weight">Weight ( in Kgs )</label>
 							<input name="weight" id="weight" type="text" placeholder="Enter your weight"
-								autocomplete="off" onblur="calculateBMI()" class="decimal">
+								autocomplete="off" onblur="calculateBMI()" class="decimal" maxlength="3">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
@@ -181,7 +188,7 @@
 	<script src="assets/js/skel.min.js"></script>
 	<script src="assets/js/util.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-	<script src="assets/js/main.js?version=1"></script>
+	<script src="assets/js/main.js?version=2"></script>
 	<script>
 		var x, i, j, selElmnt, a, b, c;
 		/*look for any elements with the class "custom-select":*/

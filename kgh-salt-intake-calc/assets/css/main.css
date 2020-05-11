@@ -1947,17 +1947,78 @@ button.form-submit.button {
 	background-color: rgba(0, 0, 0, 0.1);
 }
 
-.result-help-txt-p{
+.result-help-txt-p {
 	font-weight: normal !important;
-    color: #323232;
+	color: #323232;
 	font-size: 0.9em;
 	margin: 0;
 }
-.result-help-txt-p b{
+
+.result-help-txt-p b {
 	font-weight: bold;
 	color: #000;
 }
 
+.styled-select {
+	border: 1px solid #ccc;
+	box-sizing: border-box;
+	border-radius: 3px;
+
+	overflow: hidden;
+	position: relative;
+}
+
+.styled-select, .styled-select select {
+    width: 100%;
+    height: 2.75em;
+    border: 1px solid rgba(25, 181, 254, 0.25);
+    background: #fff;
+}
+
+select:focus {
+	outline: none;
+}
+
+.styled-select select {
+    height: 2.75em;
+    padding: 5px 0 5px 10px;
+	background: transparent;
+	border: none;
+
+	/*hide default down arrow in webkit */
+	-webkit-appearance: none;
+}
+
+@-moz-document url-prefix() {
+	.styled-select select {
+		width: 110%;
+	}
+}
+
+.fa-sort-desc {
+	position: absolute;
+	top: 0;
+	right: 12px;
+	font-size: 24px;
+}
+
+select::-ms-expand {
+	display: none;
+}
+
+/* hide default down arrow in IE10*/
+
+/* hack to fall back in opera */
+_:-o-prefocus .styled-select {
+	background: none;
+}
+.selector .styled-select {
+	background: none;
+}
+.fa-sort-desc {
+    content: "\f0dd";
+    color: rgba(25, 181, 254, 0.25);
+}
 @media screen and (max-width: 768px) {
 
 	#welcome {

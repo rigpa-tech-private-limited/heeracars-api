@@ -69,7 +69,7 @@
 			var numberReg = /^[0-9]+$/;
 			var mobile = $.trim($('#mobile').val());
 			var age = $.trim($('#age').val());
-			var gender = $(".select-selected").text();
+			var gender = $( "#gender option:selected" ).val();
 			var height = $.trim($('#height').val());
 			var weight = $.trim($('#weight').val());
 			var sodium = $.trim($('#sodium').val());
