@@ -578,9 +578,9 @@ button:disabled,
 
 }
 
-/* Contact */
+/* Patient Form */
 
-#contact {
+#patient-form {
 	display: -ms-flexbox;
 	-ms-flex-pack: justify;
 	display: -moz-flex;
@@ -598,28 +598,28 @@ button:disabled,
 	background: #ececec;
 }
 
-#contact .form {
+#patient-form .form {
 	margin: 0;
 }
 
-#contact .icons {
+#patient-form .icons {
 	margin-bottom: 1em;
 }
 
-#contact .column {
+#patient-form .column {
 	padding: 3.5em 0 1.5em 0;
 	padding-left: 3.5em;
 	padding-right: 3.5em;
 	width: 50%;
 }
 
-#contact .column.social {
+#patient-form .column.social {
 	background: #e6e6e6;
 }
 
 @media screen and (max-width: 980px) {
 
-	#contact .column {
+	#patient-form .column {
 		padding: 2em 0 0.1em 0;
 		padding-left: 2em;
 		padding-right: 2em;
@@ -629,7 +629,7 @@ button:disabled,
 
 @media screen and (max-width: 736px) {
 
-	#contact .column {
+	#patient-form .column {
 		width: 100%;
 	}
 
@@ -637,7 +637,7 @@ button:disabled,
 
 @media screen and (max-width: 480px) {
 
-	#contact .column {
+	#patient-form .column {
 		padding: 1em 0 0.1em 0;
 		padding-left: 1em;
 		padding-right: 1em;
@@ -1769,18 +1769,18 @@ body.is-loading #banner>.inner {
 	text-align: justify;
 }
 
-#generic h1 {
+#welcome h1 {
 	margin: 0;
 	text-align: center;
 }
 
-#generic .help-text {
+#welcome .help-text {
 	font-size: 0.9em;
 	margin: 0 0 10px 0;
 	text-align: center;
 }
 
-#generic {
+#welcome {
 	width: 75%;
 	margin: 0 auto;
 }
@@ -1875,16 +1875,81 @@ p.p-txt {
 }
 
 button.form-submit.button {
-    padding: 5px 10px;
-    min-height: 3em;
-    font-size: 0.8em;
+	padding: 5px 10px;
+	min-height: 3em;
+	font-size: 0.8em;
 	line-height: 0;
 	text-transform: uppercase;
 }
 
+/*the container must be positioned relative:*/
+.custom-select {
+	position: relative;
+	height: 2.75em;
+	border: 1px solid rgba(25, 181, 254, 0.25);
+}
+
+.custom-select select {
+	display: none;
+	/*hide original SELECT element:*/
+}
+
+.select-selected {
+	background-color: #fff;
+}
+
+/*style the arrow inside the select element:*/
+.select-selected:after {
+	position: absolute;
+	content: "";
+	top: 18px;
+	right: 10px;
+	width: 0;
+	height: 0;
+	border: 6px solid transparent;
+	border-color: rgba(25, 181, 254, 0.25) transparent transparent transparent;
+}
+
+/*point the arrow upwards when the select box is open (active):*/
+.select-selected.select-arrow-active:after {
+	border-color: transparent transparent rgba(25, 181, 254, 0.25) transparent;
+	top: 7px;
+}
+
+/*style the items (options), including the selected item:*/
+.select-items div,
+.select-selected {
+	color: #323232;
+	padding: 6px 16px;
+	border: 1px solid transparent;
+	border-color: transparent transparent rgba(25, 181, 254, 0.25) transparent;
+	cursor: pointer;
+	user-select: none;
+}
+
+/*style items (options):*/
+.select-items {
+	position: absolute;
+	background-color: #fff;
+	top: 100%;
+	left: 0;
+	right: 0;
+	z-index: 99;
+}
+
+/*hide the items when the select box is closed:*/
+.select-hide {
+	display: none;
+}
+
+.select-items div:hover,
+.same-as-selected {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
 @media screen and (max-width: 768px) {
 
-	#generic {
+	#welcome {
 		width: 100%;
 		margin: 0 auto;
 	}

@@ -48,6 +48,7 @@
 			var isNameValid = false;
 			var isMobileValid = false;
 			var isAgeValid = false;
+			var isGenderValid = false;
 			var isHeightValid = false;
 			var isWeightValid = false;
 			var isSodiumValid = false;
@@ -57,6 +58,7 @@
 			var numberReg = /^[0-9]+$/;
 			var mobile = $.trim($('#mobile').val());
 			var age = $.trim($('#age').val());
+			var gender = $(".select-selected").text();
 			var height = $.trim($('#height').val());
 			var weight = $.trim($('#weight').val());
 			var sodium = $.trim($('#sodium').val());
@@ -96,6 +98,14 @@
 				isAgeValid = true;
 			}
 
+			if (gender === 'Select Gender') {
+				$('#gender').nextAll('.error-msg:first').text('Please select gender');
+				isGenderValid = false;
+			} else {
+				$('#height').nextAll('.error-msg:first').html("&nbsp;");
+				isGenderValid = true;
+			}
+
 			if (height === '') {
 				$('#height').nextAll('.error-msg:first').text('Please enter your height');
 				isHeightValid = false;
@@ -127,7 +137,7 @@
 				$('#creatinine').nextAll('.error-msg:first').html("&nbsp;");
 				isCreatinineValid = true;
 			}
-			if (isNameValid && isMobileValid && isAgeValid && isHeightValid && isWeightValid && isSodiumValid && isCreatinineValid && age > 0 && weight > 0 && height > 0 && sodium > 0 && creatinine > 0) {
+			if (isGenderValid && isNameValid && isMobileValid && isAgeValid && isHeightValid && isWeightValid && isSodiumValid && isCreatinineValid && age > 0 && weight > 0 && height > 0 && sodium > 0 && creatinine > 0) {
 
 				var bmi;
 				var heightInM2 = (height * height);
@@ -135,16 +145,17 @@
 				bmi = (weight / heightInM2).toFixed(2);
 				console.log("calculateBMI", bmi);
 				var sodiumVal;
+				var saltIntakeVal;
 				var predictedCr;
 				var predicted24hrNa;
-				var gender = $('input[name="gender"]:checked').val();
+				// var gender = $('input[name="gender"]:checked').val();
 				console.log("gender", gender);
-				if (gender == 'male') {
+				if (gender == 'Male') {
 					predictedCr = (-4.72 * age) + (8.58 * weight) + (5.09 * (height * 100)) - 74.5;
-					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine * 0.0884) + 71.4;
-				} else if (gender == 'female') {
+					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine) + 71.4;
+				} else if (gender == 'Female') {
 					predictedCr = (12.63 * age) + (15.12 * weight) + (7.39 * (height * 100)) - 79.9;
-					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine * 0.0884) + 0.0;
+					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine);
 				}
 				console.log("predictedCr", predictedCr);
 				var squareRootOfNaCr;
@@ -154,6 +165,7 @@
 				sodiumVal = 16.3 * squareRootOfNaCr * (predictedCr * 0.0884);
 				console.log("sodiumVal", sodiumVal);
 				var sodiumResult = parseFloat(sodiumVal).toFixed(2);
+				saltIntakeVal = parseFloat(predicted24hrNa/73).toFixed(2);
 				console.log("predicted24hrNa", gender, "=>", predicted24hrNa);
 				console.log("calculateSodiumResult", sodiumResult);
 
@@ -168,7 +180,7 @@
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: 'Your current estimated salt intake  based on the Provided details is <b>' + sodiumResult + ' mmol/day</b>, ' +
+					html: 'Your current estimated salt intake  based on the provided details is <b>' + saltIntakeVal + '</b>, ' +
 						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'<br><br>' +
 						'<div class="diet-workout-holder">' +
