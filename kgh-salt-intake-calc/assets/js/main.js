@@ -67,6 +67,7 @@
 			var nameReg = /^[A-Za-z]+$/;
 			var name = $.trim($('#name').val());
 			var numberReg = /^[0-9]+$/;
+			var ageReg = /^-?\d*(\.\d+)?$/;
 			var mobile = $.trim($('#mobile').val());
 			var age = $.trim($('#age').val());
 			var gender = $( "#gender option:selected" ).val();
@@ -101,7 +102,7 @@
 			if (age === '') {
 				$('#age').nextAll('.error-msg:first').text('Please enter your age');
 				isAgeValid = false;
-			} else if (!numberReg.test(age)) {
+			} else if (!ageReg.test(age)) {
 				$('#age').nextAll('.error-msg:first').text('Please enter a valid age');
 				isAgeValid = false;
 			} else {
@@ -192,7 +193,8 @@
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: '<p class="result-help-txt-p">Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' mg/day</b></p>' +
+					html: '<p class="result-help-txt-p">24 Hr Sodium Value is <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' grams/day</b></p>' +
+						'<br><p class="result-help-txt-p">Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' grams/day</b></p>' +
 						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'<br><br>' +
 						'<div class="diet-workout-holder">' +
