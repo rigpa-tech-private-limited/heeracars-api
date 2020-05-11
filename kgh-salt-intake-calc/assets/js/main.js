@@ -152,10 +152,10 @@
 				console.log("gender", gender);
 				if (gender == 'Male') {
 					predictedCr = (-4.72 * age) + (8.58 * weight) + (5.09 * (height * 100)) - 74.5;
-					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine) + 71.4;
+					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium /creatinine)) + 71.4;
 				} else if (gender == 'Female') {
 					predictedCr = (12.63 * age) + (15.12 * weight) + (7.39 * (height * 100)) - 79.9;
-					predicted24hrNa = 183.5 - (3.75 * bmi) + (17.62 * sodium) / (creatinine);
+					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium /creatinine));
 				}
 				console.log("predictedCr", predictedCr);
 				var squareRootOfNaCr;
@@ -180,7 +180,7 @@
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: 'Your current estimated salt intake  based on the provided details is <b>' + saltIntakeVal + '</b>, ' +
+					html: 'Your current estimated salt intake  based on the provided details is <b>' + saltIntakeVal + ' grams/day</b>' +
 						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'<br><br>' +
 						'<div class="diet-workout-holder">' +
