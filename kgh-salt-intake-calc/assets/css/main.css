@@ -1947,6 +1947,17 @@ button.form-submit.button {
 	background-color: rgba(0, 0, 0, 0.1);
 }
 
+.result-help-txt-p{
+	font-weight: normal !important;
+    color: #323232;
+	font-size: 0.8em;
+	margin: 0;
+}
+.result-help-txt-p b{
+	font-weight: bold;
+	color: #000;
+}
+
 @media screen and (max-width: 768px) {
 
 	#welcome {

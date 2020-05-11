@@ -192,7 +192,7 @@
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: 'Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' mg/day</b>' +
+					html: '<p class="result-help-txt-p">Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' mg/day</b></p>' +
 						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'<br><br>' +
 						'<div class="diet-workout-holder">' +
