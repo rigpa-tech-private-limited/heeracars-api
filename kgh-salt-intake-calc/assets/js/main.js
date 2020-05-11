@@ -40,6 +40,17 @@
 
 	$(document).ready(function () {
 
+
+		$('.decimal').keyup(function () {
+			var val = $(this).val();
+			if (isNaN(val)) {
+				val = val.replace(/[^0-9\.]/g, '');
+				if (val.split('.').length > 2)
+					val = val.replace(/\.+$/, "");
+			}
+			$(this).val(val);
+		});
+
 		$('.submit').click(function () {
 			validateForm();
 		});
@@ -177,10 +188,11 @@
 				$('#bmi').val("");
 				$('#sodium').val("");
 				$('#creatinine').val("");
+				$('#refdoctor').val("");
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: 'Your current estimated Salt intake per day based on the provided details is <b>' + saltIntakeVal + ' mg/day</b>' +
+					html: 'Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' mg/day</b>' +
 						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'<br><br>' +
 						'<div class="diet-workout-holder">' +

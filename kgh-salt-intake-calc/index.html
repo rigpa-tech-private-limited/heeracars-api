@@ -82,22 +82,26 @@
 					<div class="form">
 						<div class="field half first">
 							<label for="name">Name</label>
-							<input name="name" id="name" type="text" placeholder="Enter your name" autocomplete="off">
+							<input tabindex="1" name="name" id="name" type="text" placeholder="Enter your name"
+								autocomplete="off">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
 							<label for="mobile">Mobile Number</label>
-							<input name="mobile" id="mobile" type="text" placeholder="Enter your mobile number" autocomplete="off">
+							<input tabindex="2" name="mobile" id="mobile" type="text"
+								placeholder="Enter your mobile number" autocomplete="off"
+								onkeypress="return isNumber(event)">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half first">
 							<label for="refdoctor">Refernced Doctor</label>
-							<input name="refdoctor" id="refdoctor" type="text" placeholder="Enter the refernced doctor name" autocomplete="off">
+							<input tabindex="3" name="refdoctor" id="refdoctor" type="text"
+								placeholder="Enter the refernced doctor name" autocomplete="off">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
 							<label for="gender">Gender</label>
-							<div class="custom-select" id="gender">
+							<div class="custom-select" id="gender" tabindex="4">
 								<select>
 									<option value="0">Select Gender</option>
 									<option value="1">Male</option>
@@ -118,17 +122,20 @@
 						</div>
 						<div class="field half first">
 							<label for="age">Age ( in years )</label>
-							<input name="age" id="age" type="text" placeholder="Enter your age " autocomplete="off">
+							<input name="age" id="age" type="text" placeholder="Enter your age " autocomplete="off"
+								class="decimal">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
 							<label for="height">Height ( in meters )</label>
-							<input name="height" id="height" type="text" placeholder="Enter your height " autocomplete="off" onblur="calculateBMI()">
+							<input name="height" id="height" type="text" placeholder="Enter your height "
+								autocomplete="off" onblur="calculateBMI()" class="decimal">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half first">
 							<label for="weight">Weight ( in Kgs )</label>
-							<input name="weight" id="weight" type="text" placeholder="Enter your weight" autocomplete="off" onblur="calculateBMI()">
+							<input name="weight" id="weight" type="text" placeholder="Enter your weight"
+								autocomplete="off" onblur="calculateBMI()" class="decimal">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
@@ -136,18 +143,19 @@
 							<input name="bmi" disabled id="bmi" type="text" placeholder="BMI" autocomplete="off">
 							<span class="error-msg">&nbsp;</span>
 						</div>
-						
+
 						<div class="field">
 							<label for="message">1st Hour Urine NA /Creatinine</label>
 						</div>
 						<div class="field half first">
 							<label for="sodium">Sodium ( in mmol/L )</label>
-							<input name="sodium" id="sodium" type="text" placeholder=" in mmol/L" autocomplete="off">
+							<input name="sodium" id="sodium" type="text" placeholder=" in mmol/L" autocomplete="off" class="decimal">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<div class="field half">
 							<label for="creatinine">Creatinine ( in mg/dL )</label>
-							<input name="creatinine" id="creatinine" type="text" placeholder=" in mg/dL" autocomplete="off">
+							<input name="creatinine" id="creatinine" type="text" placeholder=" in mg/dL"
+								autocomplete="off" class="decimal">
 							<span class="error-msg">&nbsp;</span>
 						</div>
 						<ul class="actions">
@@ -248,6 +256,15 @@
 		/*if the user clicks anywhere outside the select box,
 		then close all select boxes:*/
 		document.addEventListener("click", closeAllSelect);
+
+		function isNumber(evt) {
+			evt = (evt) ? evt : window.event;
+			var charCode = (evt.which) ? evt.which : evt.keyCode;
+			if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+				return false;
+			}
+			return true;
+		}
 	</script>
 </body>
 
