@@ -165,7 +165,7 @@
 				sodiumVal = 16.3 * squareRootOfNaCr * (predictedCr * 0.0884);
 				console.log("sodiumVal", sodiumVal);
 				var sodiumResult = parseFloat(sodiumVal).toFixed(2);
-				saltIntakeVal = parseFloat(predicted24hrNa/73).toFixed(2);
+				saltIntakeVal = parseFloat(predicted24hrNa/17).toFixed(2);
 				console.log("predicted24hrNa", gender, "=>", predicted24hrNa);
 				console.log("calculateSodiumResult", sodiumResult);
 
