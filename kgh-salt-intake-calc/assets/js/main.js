@@ -39,7 +39,16 @@
 	});
 
 	$(document).ready(function () {
-
+		$(window).scroll(function(){
+			if ($(window).scrollTop() >= 300) {
+				$('nav').addClass('fixed-header');
+				$('nav div').addClass('visible-title');
+			}
+			else {
+				$('nav').removeClass('fixed-header');
+				$('nav div').removeClass('visible-title');
+			}
+		});
 
 		$('.decimal').keyup(function () {
 			var val = $(this).val();
@@ -194,7 +203,7 @@
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
 					html: '<div class="result-top-div"><p class="result-help-txt-p">Your current Prediction based on the provided details are</p>' +
-						'<p class="result-help-txt-p"><i>24 Hr Sodium</i> <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' grams/day</b></p>' +
+						'<p class="result-help-txt-p"><i>24 Hr Sodium</i> <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' mmol/day</b></p>' +
 						'<p class="result-help-txt-p"><i>Salt intake per day</i> <b>' + saltIntakeVal + ' grams/day</b></p>' +
 						'<span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
 						'</div>' +
