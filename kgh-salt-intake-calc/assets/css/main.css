@@ -1611,13 +1611,12 @@ body.is-loading #banner>.inner {
 	-webkit-justify-content: center;
 	-ms-justify-content: center;
 	justify-content: center;
-	min-height: 75vh;
-	height: 75vh;
+	min-height: 350px;
+	height: 350px;
 	position: relative;
 	background: #000;
 	background-image: url(../../images/kghospitalbanner.jpg);
 	background-size: cover;
-	background-attachment: fixed;
 	background-repeat: no-repeat;
 	background-position: center;
 	text-align: center;
@@ -1769,17 +1768,23 @@ body.is-loading #banner>.inner {
 	text-align: justify;
 }
 
+#salt-monitor h3 {
+	text-align: center;
+}
+
 #welcome h1 {
 	margin: 0;
 	text-align: center;
 }
 
+#salt-monitor .help-text,
 #welcome .help-text {
 	font-size: 0.9em;
 	margin: 0 0 10px 0;
 	text-align: center;
 }
 
+#salt-monitor,
 #welcome {
 	width: 75%;
 	margin: 0 auto;
@@ -1951,12 +1956,23 @@ button.form-submit.button {
 	font-weight: normal !important;
 	color: #323232;
 	font-size: 0.9em;
-	margin: 0;
+	margin: 5px 0;
+	text-align: left;
+	display: flex;
 }
 
 .result-help-txt-p b {
 	font-weight: bold;
 	color: #000;
+}
+
+.result-help-txt-p i {
+	width: 35%;
+}
+
+.result-top-div {
+	border: 1px solid #ddd;
+	padding: 10px;
 }
 
 .styled-select {
@@ -1968,11 +1984,12 @@ button.form-submit.button {
 	position: relative;
 }
 
-.styled-select, .styled-select select {
-    width: 100%;
-    height: 2.75em;
-    border: 1px solid rgba(25, 181, 254, 0.25);
-    background: #fff;
+.styled-select,
+.styled-select select {
+	width: 100%;
+	height: 2.75em;
+	border: 1px solid rgba(25, 181, 254, 0.25);
+	background: #fff;
 }
 
 select:focus {
@@ -1980,8 +1997,8 @@ select:focus {
 }
 
 .styled-select select {
-    height: 2.75em;
-    padding: 5px 0 5px 10px;
+	height: 2.75em;
+	padding: 5px 0 5px 10px;
 	background: transparent;
 	border: none;
 
@@ -2012,23 +2029,134 @@ select::-ms-expand {
 _:-o-prefocus .styled-select {
 	background: none;
 }
+
 .selector .styled-select {
 	background: none;
 }
+
 .fa-sort-desc {
-    content: "\f0dd";
-    color: rgba(25, 181, 254, 0.25);
+	content: "\f0dd";
+	color: rgba(25, 181, 254, 0.25);
 }
+
+ul.novelty-steps {
+	list-style: decimal;
+}
+
+.copyright p {
+	color: #323232;
+}
+
+.photo-main-container {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: space-around;
+	flex-direction: row;
+}
+
+.photo-div {
+	width: 150px;
+	height: 150px;
+	background-color: #ddd;
+	border: 1px solid #ccc;
+	border-radius: 50%;
+	background-position: center right;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+
+.app-img {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	justify-content: center;
+	padding: 20px 0;
+}
+
+.app-img img {
+	max-width: 100%;
+	width: auto;
+}
+
+.photo-div.photo-1 {
+	background-image: url("../../images/doctors/shidram.jpg");
+}
+
+.photo-div.photo-2 {
+	background-image: url("../../images/doctors/elangovan.jpg");
+}
+
+.photo-div.photo-3 {
+	background-image: url("../../images/doctors/rajagopal.jpg");
+}
+
+.owner-img {
+	position: absolute;
+	width: 150px;
+	height: 150px;
+	background-image: url("../../images/doctors/bakthavathsalam.jpg");
+	top: 0;
+	z-index: 100;
+	background-repeat: no-repeat;
+	background-size: cover;
+	right: 0;
+}
+
+.owner-img p {
+	position: absolute;
+	bottom: 0;
+	margin: 0 !important;
+	font-size: 0.8em !important;
+	text-align: center;
+	width: 100%;
+}
+
+.photo-holder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.caption-div h6 {
+	font-size: 1em;
+	margin: 10px 0 3px;
+}
+
+.caption-div p {
+	font-size: 0.8em;
+	text-align: center;
+	margin: 2px;
+}
+
+section#salt-monitor {
+	background: #ececec;
+	width: 100%;
+}
+
+#salt-monitor .inner {
+	background: transparent;
+	width: 75%;
+	margin: 0 auto;
+}
+
 @media screen and (max-width: 768px) {
 
-	#welcome {
+	#welcome,
+	#salt-monitor .inner {
 		width: 100%;
 		margin: 0 auto;
 	}
 
 	#banner {
-		min-height: 30vh;
-		height: 30vh;
+		min-height: 200px;
+		height: 200px;
 	}
-
+	.photo-main-container {
+		flex-direction: column;
+	}
+	.owner-img{
+		display: none;
+	}
 }

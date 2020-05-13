@@ -70,7 +70,7 @@
 			var ageReg = /^-?\d*(\.\d+)?$/;
 			var mobile = $.trim($('#mobile').val());
 			var age = $.trim($('#age').val());
-			var gender = $( "#gender option:selected" ).val();
+			var gender = $("#gender option:selected").val();
 			var height = $.trim($('#height').val());
 			var weight = $.trim($('#weight').val());
 			var sodium = $.trim($('#sodium').val());
@@ -152,7 +152,7 @@
 			if (isGenderValid && isNameValid && isMobileValid && isAgeValid && isHeightValid && isWeightValid && isSodiumValid && isCreatinineValid && age > 0 && weight > 0 && height > 0 && sodium > 0 && creatinine > 0) {
 
 				var bmi;
-				var heightInM2 = (height * height);
+				var heightInM2 = (height / 100) * (height / 100);
 				console.log("heightInM2", heightInM2);
 				bmi = (weight / heightInM2).toFixed(2);
 				console.log("calculateBMI", bmi);
@@ -163,11 +163,11 @@
 				// var gender = $('input[name="gender"]:checked').val();
 				console.log("gender", gender);
 				if (gender == 'Male') {
-					predictedCr = (-4.72 * age) + (8.58 * weight) + (5.09 * (height * 100)) - 74.5;
-					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium /creatinine)) + 71.4;
+					predictedCr = (-4.72 * age) + (8.58 * weight) + (5.09 * ((height / 100) * 100)) - 74.5;
+					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium / creatinine)) + 71.4;
 				} else if (gender == 'Female') {
-					predictedCr = (12.63 * age) + (15.12 * weight) + (7.39 * (height * 100)) - 79.9;
-					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium /creatinine));
+					predictedCr = (12.63 * age) + (15.12 * weight) + (7.39 * ((height / 100) * 100)) - 79.9;
+					predicted24hrNa = (183.5 - (3.75 * bmi)) + (17.62 * (sodium / creatinine));
 				}
 				console.log("predictedCr", predictedCr);
 				var squareRootOfNaCr;
@@ -177,7 +177,7 @@
 				sodiumVal = 16.3 * squareRootOfNaCr * (predictedCr * 0.0884);
 				console.log("sodiumVal", sodiumVal);
 				var sodiumResult = parseFloat(sodiumVal).toFixed(2);
-				saltIntakeVal = parseFloat(predicted24hrNa/17).toFixed(2);
+				saltIntakeVal = parseFloat(predicted24hrNa / 17).toFixed(2);
 				console.log("predicted24hrNa", gender, "=>", predicted24hrNa);
 				console.log("calculateSodiumResult", sodiumResult);
 
@@ -193,10 +193,11 @@
 				Swal.fire({
 					title: '<strong><u>Prediction</u></strong>',
 					icon: 'success',
-					html: '<p class="result-help-txt-p">24 Hr Sodium Value is <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' grams/day</b></p>' +
-						'<br><p class="result-help-txt-p">Your current estimated salt intake per day based on the provided details is <b>' + saltIntakeVal + ' grams/day</b></p>' +
-						'<br><span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
-						'<br><br>' +
+					html: '<div class="result-top-div"><p class="result-help-txt-p">Your current Prediction based on the provided details are</p>' +
+						'<p class="result-help-txt-p"><i>24 Hr Sodium</i> <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' grams/day</b></p>' +
+						'<p class="result-help-txt-p"><i>Salt intake per day</i> <b>' + saltIntakeVal + ' grams/day</b></p>' +
+						'<span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
+						'</div>' +
 						'<div class="diet-workout-holder">' +
 						'<div class="diet-holder">' +
 						'<div class="diet-icon-div">' +
@@ -246,7 +247,7 @@ function calculateBMI() {
 	var weight = $.trim($('#weight').val());
 	if (height > 0 && weight > 0) {
 		var bmi;
-		var heightInM2 = (height * height);
+		var heightInM2 = (height / 100) * (height / 100);
 		console.log("heightInM2", heightInM2);
 		bmi = (weight / heightInM2).toFixed(2);
 		console.log("calculateBMI", bmi);
