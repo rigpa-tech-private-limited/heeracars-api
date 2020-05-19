@@ -1822,6 +1822,9 @@ body.is-loading #banner>.inner {
 
 .result-help-txt {
 	font-size: 0.7em;
+	clear: both;
+	text-align: left;
+	margin: 5px;
 }
 
 .diet-workout-holder {
@@ -2094,6 +2097,10 @@ ul.novelty-steps {
 
 .photo-div.photo-3 {
 	background-image: url("../../images/doctors/rajagopal.jpg");
+}
+
+.photo-div.photo-4 {
+	background-image: url("../../images/doctors/sridhar.jpg");
 }
 
 .owner-img {

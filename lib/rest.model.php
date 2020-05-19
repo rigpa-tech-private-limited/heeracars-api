@@ -212,12 +212,12 @@
             }
         }
 
-        function addAgent($name, $mobile, $email='', $company='', $location='',$pin='',$added_by='0'){
+        function addAgent($name, $mobile, $email='', $company='', $location='', $designation='', $pin='',$added_by='0'){
             
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                $sql = "INSERT INTO users ( name, mobile, email, company, location, password, role,added_by, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$pin', 'agent', '$added_by', NOW())";
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', 'agent', '$added_by', NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
@@ -242,13 +242,13 @@
             return $insertFlag;
         }
 
-        function updateAgent($name, $mobile, $email="", $company="", $location="",$id){
+        function updateAgent($name, $mobile, $email="", $company="", $location="", $designation="", $id){
             
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."' WHERE id = '" . $id . "'";
+                $sql = "UPDATE users SET name = '".$name."', mobile =  '".$mobile."', email =  '".$email."', company =  '".$company."', location =  '".$location."', designation =  '".$designation."' WHERE id = '" . $id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
                 

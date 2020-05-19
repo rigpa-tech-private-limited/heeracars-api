@@ -245,7 +245,9 @@
 					html: '<div class="result-top-div"><p class="result-help-txt-p">Your current Prediction based on the provided details are</p>' +
 						'<p class="result-help-txt-p"><i>24 Hr Sodium</i> <b>' + parseFloat(predicted24hrNa).toFixed(2) + ' mmol/day</b></p>' +
 						'<p class="result-help-txt-p"><i>Salt intake per day</i> <b>' + saltIntakeVal + ' grams/day</b></p>' +
-						'<span class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</span>' +
+						'<div class="result-help-txt">The prescribed salt intake as per WHO Standards is  5  grams/day</div>' +
+						'<div class="result-help-txt">If any pre disease then it 5-7 g and if there is no pre disease then it can be 10g.</div>' +
+						'<div class="result-help-txt">Please consult your doctor for any medical advice.</div>' +
 						'</div>' +
 						'<div class="diet-workout-holder">' +
 						'<div class="diet-holder">' +
