@@ -332,7 +332,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT n.sender_id,n.quotation_id,s.name as sender_name,n.type,n.title,n.message,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."' ORDER BY n.created_on DESC");
+                $query = mysqli_query($conn, "SELECT n.sender_id, n.quotation_id,s.name as sender_name,n.type,n.title,n.message, IFNULL(n.description,'') as description,n.recipient_id,r.name as recipient_name,n.is_unread,n.created_on FROM notifications n INNER JOIN users s ON n.sender_id = s.id INNER JOIN users r ON n.recipient_id = r.id WHERE n.recipient_id = '".$recipient_id."' ORDER BY n.created_on DESC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
@@ -474,12 +474,12 @@
            return $user;
         }
 
-        function addNotifications($sender_id,$quotation_id, $type, $title, $message, $recipient_id=''){
+        function addNotifications($sender_id,$quotation_id, $type, $title, $message, $recipient_id='', $description=''){
             $$last_id  = '';
             try {
                 $Dbobj = new DbConnection(); 
                 $conn = $Dbobj->getdbconnect();
-                $sql = "INSERT INTO notifications ( sender_id, quotation_id, type, title, message, recipient_id,created_on ) VALUES ('$sender_id', '$quotation_id', '$type', '$title', '$message', '$recipient_id',NOW())";
+                $sql = "INSERT INTO notifications ( sender_id, quotation_id, type, title, message,description, recipient_id,created_on ) VALUES ('$sender_id', '$quotation_id', '$type', '$title', '$message', '$description', '$recipient_id',NOW())";
                 $query = mysqli_query($conn, $sql);
                 $last_id = mysqli_insert_id($conn);
             } catch (Exception $e) {
@@ -515,7 +515,7 @@
         }
 
 
-        function editQuotation($quotation_id, $user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0',$priority){
+        function editQuotation($quotation_id, $user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0',$priority=""){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
@@ -685,7 +685,7 @@
                 } else {
                     $condition .= " ORDER BY q.created_on DESC";
                 }
-                $sql = "SELECT q.id, q.user_id, u.name,u.role,IFNULL(u.mobile,'') as mobile,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by,IFNULL((SELECT au.role FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by_role,DATE_FORMAT(q.approved_date, '%d %b %Y') as approved_date,DATE_FORMAT(q.approved_date, '%Y-%m-%d') as s_approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by, IFNULL((SELECT du.role FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by_role, DATE_FORMAT(q.dropped_date, '%d %b %Y') as dropped_date, DATE_FORMAT(q.dropped_date, '%Y-%m-%d') as s_dropped_date,reason, CASE WHEN q.status = '0' THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,DATE_FORMAT(q.created_on, '%d %b %Y') as created_date,DATE_FORMAT(q.created_on, '%Y-%m-%d') as s_created_date, q.priority FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
+                $sql = "SELECT q.id, q.user_id, u.name,u.role,IFNULL(u.mobile,'') as mobile,u.company, q.make_id, q.make_display, q.model_id, q.model_display, q.year_id, q.year, q.variant_id, q.variant_display, q.car_color, q.fuel_type, q.car_kms, q.car_owner, q.is_replacement, q.structural_damage, q.structural_damage_desc, q.insurance_date, q.refurbishment_cost, q.requested_price, q.approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by,IFNULL((SELECT au.role FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by_role,DATE_FORMAT(q.approved_date, '%d %b %Y') as approved_date,DATE_FORMAT(q.approved_date, '%Y-%m-%d') as s_approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by, IFNULL((SELECT du.role FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by_role, DATE_FORMAT(q.dropped_date, '%d %b %Y') as dropped_date, DATE_FORMAT(q.dropped_date, '%Y-%m-%d') as s_dropped_date,reason, CASE WHEN (q.status = '0' AND (SELECT count(qc.id) FROM quotation_comments qc WHERE qc.quotation_id = q.quotation_id)=0) THEN 'New' WHEN (q.status = '0' AND (SELECT count(qc.id) FROM quotation_comments qc WHERE qc.quotation_id = q.quotation_id)>0) THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,DATE_FORMAT(q.created_on, '%d %b %Y') as created_date,DATE_FORMAT(q.created_on, '%Y-%m-%d') as s_created_date, q.priority FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.status IN (0,1,2)".$condition;
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
@@ -735,7 +735,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name,u.role,IFNULL(u.mobile,'') as mobile,u.company, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by,IFNULL((SELECT au.role FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by_role,DATE_FORMAT(q.approved_date, '%d %b %Y') as approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by, IFNULL((SELECT du.role FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by_role,DATE_FORMAT(q.dropped_date, '%d %b %Y') as dropped_date,reason, CASE WHEN status = '0' THEN 'Pending' WHEN status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,DATE_FORMAT(q.created_on, '%d %b %Y') as created_date, q.priority FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
+                $query = mysqli_query($conn, "SELECT q.id, q.user_id, u.name,u.role,IFNULL(u.mobile,'') as mobile,u.company, make_id, make_display, model_id, model_display, year_id, year, variant_id, variant_display, car_color, fuel_type, car_kms, car_owner, is_replacement,structural_damage,structural_damage_desc, insurance_date, refurbishment_cost, requested_price, approved_price,IFNULL((SELECT au.name FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by,IFNULL((SELECT au.role FROM users au WHERE au.id = q.approved_by LIMIT 1),'') as approved_by_role,DATE_FORMAT(q.approved_date, '%d %b %Y') as approved_date, IFNULL((SELECT du.name FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by, IFNULL((SELECT du.role FROM users du WHERE du.id = q.dropped_by LIMIT 1),'') as dropped_by_role,DATE_FORMAT(q.dropped_date, '%d %b %Y') as dropped_date,reason, CASE WHEN (q.status = '0' AND (SELECT count(qc.id) FROM quotation_comments qc WHERE qc.quotation_id = q.quotation_id)=0) THEN 'New' WHEN (q.status = '0' AND (SELECT count(qc.id) FROM quotation_comments qc WHERE qc.quotation_id = q.quotation_id)>0) THEN 'Pending' WHEN q.status = '1' THEN 'Approved' ELSE 'Rejected' END AS status,DATE_FORMAT(q.created_on, '%d %b %Y') as created_date, q.priority FROM quotations q INNER JOIN users u ON q.user_id = u.id WHERE q.id = ".$id);
                 $quotation = mysqli_fetch_assoc($query);
                 if(count($quotation)>0){
                     $images = $this->getQuotationImages($quotation['id']);
@@ -780,7 +780,7 @@
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     $title = "Comment";
                     $message = "Quotation comment added by ".$user['name'];
-                    $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id);
+                    $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id, $comments);
                     if(count($user)>0){
                         $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                     }

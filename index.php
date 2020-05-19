@@ -359,7 +359,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $updateCount = $restModel->editQuotation($data['quotation_id'], $user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id']);
+            $updateCount = $restModel->editQuotation($data['quotation_id'], $user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id'],$data['priority']);
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation updated."]);
             } else {
