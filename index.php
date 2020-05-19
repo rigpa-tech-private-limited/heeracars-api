@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addStudent","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("addStudent","changePriority","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   // if($_REQUEST['service_name']=='validatePin'){
@@ -332,7 +332,11 @@ if($_SERVER['REQUEST_METHOD']=="POST")
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $insertID = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id']);
+            $priority = "normal";
+            if(isset($data['priority'])){
+              $priority = $data['priority'];
+            }
+            $insertID = $restModel->addQuotations($user['id'], $data['make_id'],$data['make_display'], $data['model_id'], $data['model_display'], $data['year_id'], $data['year'], $data['variant_id'], $data['variant_display'],$data['car_color'],$data['fuel_type'],$data['car_kms'],$data['car_owner'],$data['is_replacement'],$data['structural_damage'],$data['structural_damage_desc'],$data['insurance_date'],$data['refurbishment_cost'],$data['requested_price'],$data['recipient_id'],$priority);
             if($insertID!=''){
               echo json_encode(["status"=>"success", "status_code"=>"200","quotation_id"=>$insertID, "message"=>"Quotation request sent successfully."]);
             } else {
@@ -360,6 +364,28 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation updated."]);
             } else {
               echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Updation faild"]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='changePriority'){
+      if(isset($data['quotation_id']) && isset($data['priority']) && isset($data['recipient_id']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $updateCount = $restModel->changePriority($data['quotation_id'],$data['priority'],$user['id'],$data['recipient_id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"priority changed."]);
+            } else {
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"priority not changed"]);
             }
           }
         } else {
