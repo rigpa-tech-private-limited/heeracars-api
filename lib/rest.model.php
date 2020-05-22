@@ -212,12 +212,12 @@
             }
         }
 
-        function addAgent($name, $mobile, $email='', $company='', $location='', $designation='', $pin='',$added_by='0'){
+        function addAgent($name, $mobile, $email='', $company='', $location='', $designation='', $pin='',$added_by='0', $role=''){
             
             $insertFlag  = false;
             try {
                 $Dbobj = new DbConnection(); 
-                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', 'agent', '$added_by', NOW())";
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', '$role', '$added_by', NOW())";
                 $query = mysqli_query($Dbobj->getdbconnect(), $sql);
                 $insertFlag  = $query;
             } catch (Exception $e) {
@@ -906,6 +906,23 @@
             }
             return $count;
         }
+
+        function deleteQuotationImage($image_id){
+            
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $sql = "DELETE FROM quotation_images WHERE id = '" . $image_id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
+        
 
         function sendSinglePush($title, $message, $imagePath='',$device_token,$device_type){
             if($device_type=='ios'){

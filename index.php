@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addStudent","changePriority","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage","updateQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("addStudent","changePriority","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage", "updateQuotationImage", "deleteQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   // if($_REQUEST['service_name']=='validatePin'){
@@ -173,7 +173,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             $pin = $restModel->generateUniquePIN();
             $user = $restModel->getUserByToken($data['token']);
             if(count($user) > 0){
-              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['designation'], $pin, $user['id']);
+              $insertFlag = $restModel->addAgent($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['designation'], $pin, $user['id'], $data['role']);
               if($insertFlag){
                 if($data['email']!=''){
                   $sendMail = $restModel->sendWelcomeMail($data['name'],$data['email'],$pin,0);
@@ -750,10 +750,33 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
+    if($data['service_name']=='deleteQuotationImage'){
+      if(isset($data['image_id']) && isset($data['token'])){
+          $restModel = new RESTAPIModel();
+          $tokenValidation = $restModel->validateUserToken($data['token']);
+          if($tokenValidation || ($tokenValidation==1)){
+            $user = $restModel->getUserByToken($data['token']);
+            if(count($user) > 0){
+              $updateCount = $restModel->deleteQuotationImage($data['image_id']);
+              if($updateCount > 0){
+                echo json_encode(["status"=>"success", "status_code"=>"200","image_id"=>$data['image_id'], "message"=>"Quotation image deleted successfully."]);
+              } else {
+                echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Quotation image not deleted"]);
+              }
+            }
+          } else {
+            echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+          }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
   } else {
     echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Web service not available"]);
   }
 }
+
 
 if($_SERVER['REQUEST_METHOD']=="GET")
 {
