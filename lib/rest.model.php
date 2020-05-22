@@ -313,7 +313,7 @@
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
-                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,designation,role,password as pin,is_expired,active,token FROM users ORDER BY role ASC, active DESC, name ASC");
+                $query = mysqli_query($conn, "SELECT id,name,mobile,email,company,location,designation,role,password as pin,is_expired,active,token FROM users ORDER BY active DESC, role ASC, name ASC");
                 $count  = mysqli_num_rows($query);
                 if ($count > 0) {
                     while($row = mysqli_fetch_assoc($query)) {
