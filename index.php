@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addStudent","changePriority","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage", "updateQuotationImage", "deleteQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("addStudent","changePriority","pasueNotification","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage", "updateQuotationImage", "deleteQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken","addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   // if($_REQUEST['service_name']=='validatePin'){
@@ -28,8 +28,6 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
   }
   if(isset($data['service_name']) && $data['service_name']!='' && in_array($data['service_name'], $allowedAPIs)){
-
-    
 
     if($data['service_name']=='getOTP'){
       if(isset($data['cc']) && isset($data['mobile'])){
@@ -514,6 +512,28 @@ if($_SERVER['REQUEST_METHOD']=="POST")
               echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications_count'=>$notifications[0]['notifications_count']]);
             } else {
               echo json_encode(["status"=>'success', "status_code"=>"200", 'notifications_count'=>0]);
+            }
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
+    if($data['service_name']=='pasueNotification'){
+      if(isset($data['from_time']) && isset($data['to_time']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $user = $restModel->getUserByToken($data['token']);
+          if(count($user) > 0){
+            $updateCount = $restModel->pasueNotification($data['from_time'], $data['to_time'], $user['id']);
+            if($updateCount > 0){
+              echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation updated."]);
+            } else {
+              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Updation faild"]);
             }
           }
         } else {

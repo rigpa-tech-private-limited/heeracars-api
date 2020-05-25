@@ -513,7 +513,22 @@
             }
             return $last_id;
         }
-
+        
+        function pasueNotification($from_time, $to_time, $user_id){
+            $count  = 0;
+            try {
+                $Dbobj = new DbConnection();
+                $conn = $Dbobj->getdbconnect();
+                $currentDate = date("Y/m/d");
+                $sql = "UPDATE users SET pn_from_time='".$from_time."', pn_to_time='".$to_time."' WHERE id = '" . $user_id . "'";
+                $query = mysqli_query($conn, $sql);
+                $count  = mysqli_affected_rows($conn);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $count;
+        }
 
         function editQuotation($quotation_id, $user_id, $make_id, $make_display, $model_id, $model_display, $year_id, $year, $variant_id, $variant_display, $car_color='',$fuel_type='',$car_kms='',$car_owner='',$is_replacement='',$structural_damage='',$structural_damage_desc='',$insurance_date='',$refurbishment_cost='',$requested_price='',$recipient_id='0',$priority=""){
             $count  = 0;
