@@ -514,13 +514,13 @@
             return $last_id;
         }
         
-        function pasueNotification($from_time, $to_time, $user_id){
+        function pasueNotification($scheduled,$from_time, $to_time, $user_id){
             $count  = 0;
             try {
                 $Dbobj = new DbConnection();
                 $conn = $Dbobj->getdbconnect();
                 $currentDate = date("Y/m/d");
-                $sql = "UPDATE users SET pn_from_time='".$from_time."', pn_to_time='".$to_time."' WHERE id = '" . $user_id . "'";
+                $sql = "UPDATE users SET pn_scheduled='".$scheduled."', pn_from_time='".$from_time."', pn_to_time='".$to_time."' WHERE id = '" . $user_id . "'";
                 $query = mysqli_query($conn, $sql);
                 $count  = mysqli_affected_rows($conn);
             } catch (Exception $e) {
