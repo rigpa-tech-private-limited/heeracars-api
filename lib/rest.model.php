@@ -465,7 +465,7 @@
             $user  = [];
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id' LIMIT 1) as name,push_token FROM users WHERE id = '$recipient_id' AND active='1'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id' LIMIT 1) as name,push_token,pn_scheduled,pn_from_time,pn_to_time,role FROM users WHERE id = '$recipient_id' AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
@@ -504,7 +504,16 @@
                         $title = "Quotation Request";
                         $message = "New quotation(ID#:".$last_id.") has been requested by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $last_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
@@ -545,7 +554,16 @@
                         $title = "Quotation Updation";
                         $message = "Quotation (ID#:".$quotation_id.") has been updated by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
@@ -570,7 +588,16 @@
                         $title = "Quotation Resubmit";
                         $message = "Quotation (ID#:".$quotation_id.") has been resubmitted with new price ".$requested_price." by ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
@@ -595,7 +622,16 @@
                         $title = "Priority Changed";
                         $message = "Quotation (ID#:".$quotation_id.") has been marked as ".$priority." by ".$user['name'];
                         $addNotify = $this->addNotifications($approved_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
@@ -620,7 +656,16 @@
                         $title = "Quotation Approval";
                         $message = "Quotation (ID#:".$quotation_id.") has been approved by ".$user['name'];
                         $addNotify = $this->addNotifications($approved_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
@@ -641,11 +686,20 @@
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);
-                    if(count($user)>0){                    
+                    if(count($user)>0){         
                         $title = "Quotation Rejection";
                         $message = "Quotation: (ID#:".$quotation_id.") has been rejected by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }           
                     }
                 }
             } catch (Exception $e) {
@@ -666,11 +720,20 @@
                 $count  = mysqli_affected_rows($conn);
                 if($count>0){
                     $user = $this->getPushTokenByUserID($dropped_by,$recipient_id);    
-                    if(count($user)>0){                
+                    if(count($user)>0){     
                         $title = "Quotation Sold";
                         $message = "Quotation: (ID#:".$quotation_id.") has been marked as sold by ".$user['name'];
                         $addNotify = $this->addNotifications($dropped_by, $quotation_id, 'quotation', $title, $message, $recipient_id);
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }           
                     }
                 }
             } catch (Exception $e) {
@@ -793,11 +856,20 @@
                 $last_id = mysqli_insert_id($conn);
                 if($last_id>0){
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
-                    $title = "Comment";
-                    $message = "Quotation comment added by ".$user['name'];
-                    $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id, $comments);
                     if(count($user)>0){
-                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        $title = "Comment";
+                        $message = "Quotation comment added by ".$user['name'];
+                        $addNotify = $this->addNotifications($user_id, $quotation_id, 'comment', $title, $message, $recipient_id, $comments);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+
+                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                            $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        }
                     }
                 }
             } catch (Exception $e) {
