@@ -523,13 +523,13 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='pasueNotification'){
-      if(isset($data['from_time']) && isset($data['to_time']) && isset($data['token'])){
+      if(isset($data['scheduled']) && isset($data['from_time']) && isset($data['to_time']) && isset($data['token'])){
         $restModel = new RESTAPIModel();
         $tokenValidation = $restModel->validateUserToken($data['token']);
         if($tokenValidation || ($tokenValidation==1)){
           $user = $restModel->getUserByToken($data['token']);
           if(count($user) > 0){
-            $updateCount = $restModel->pasueNotification($data['from_time'], $data['to_time'], $user['id']);
+            $updateCount = $restModel->pasueNotification($data['scheduled'],$data['from_time'], $data['to_time'], $user['id']);
             if($updateCount > 0){
               echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"Quotation updated."]);
             } else {
