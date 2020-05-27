@@ -465,7 +465,7 @@
             $user  = [];
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id' LIMIT 1) as name,push_token,pn_scheduled,pn_from_time,pn_to_time,role FROM users WHERE id = '$recipient_id' AND active='1'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT (SELECT name FROM users WHERE id = '$sender_id' LIMIT 1) as name,push_token,(SELECT pn_scheduled FROM users WHERE id = '$sender_id' LIMIT 1) pn_scheduled,(SELECT pn_from_time FROM users WHERE id = '$sender_id' LIMIT 1) pn_from_time,(SELECT pn_to_time FROM users WHERE id = '$sender_id' LIMIT 1) pn_to_time,role FROM users WHERE id = '$recipient_id' AND active='1'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
