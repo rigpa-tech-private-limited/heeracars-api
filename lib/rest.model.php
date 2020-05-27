@@ -863,10 +863,12 @@
                         date_default_timezone_set("Asia/Kolkata");
                         $currDate = date('h:i:s A');
                         $currDate=date('h:i:s A', strtotime($currDate));
-                        // echo $paymentDate; // echos today! 
-                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
-                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
-
+                        echo $currDate; // echos today! 
+                        echo "<br>";
+                        echo $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        echo "<br>";
+                        echo $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+                        echo "<br>";
                         if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                         }
