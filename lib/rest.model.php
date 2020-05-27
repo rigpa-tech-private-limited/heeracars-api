@@ -870,11 +870,16 @@
                         echo $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
                         echo "<br>";
                         echo "pn_scheduled=".$user['pn_scheduled'];
-                        echo "<br>";
-                        echo "(currDate >= dateEnd)=".($currDate >= $dateEnd);
-                        echo "<br>";
-                        echo "(currDate <= dateBegin)=".($currDate <= $dateBegin);
-                        echo "<br>".($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin));
+                        // echo "<br>";
+                        // echo "(currDate >= dateEnd)=".($currDate >= $dateEnd);
+                        // echo "<br>";
+                        // echo "(currDate <= dateBegin)=".($currDate <= $dateBegin);
+                        // echo "<br>".($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin));
+                        if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            echo "in between";
+                        }else{
+                            echo "Not in";
+                        }
                         if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin))){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                         }
