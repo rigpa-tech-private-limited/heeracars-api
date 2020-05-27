@@ -875,13 +875,14 @@
                         // echo "<br>";
                         // echo "(currDate <= dateBegin)=".($currDate <= $dateBegin);
                         // echo "<br>".($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin));
-                        if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
-                            echo "in between";
-                        }else{
-                            echo "Not in";
-                        }
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin))){
+                        
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
