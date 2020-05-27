@@ -510,9 +510,13 @@
                         // echo $paymentDate; // echos today! 
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
-
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
@@ -561,8 +565,13 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
@@ -595,8 +604,13 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
@@ -629,8 +643,13 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
@@ -663,8 +682,13 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
                         }
                     }
                 }
@@ -697,9 +721,14 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
-                        }           
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
+                        }        
                     }
                 }
             } catch (Exception $e) {
@@ -731,9 +760,14 @@
                         $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
                         $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
 
-                        if(($user['pn_scheduled']==0) || ($user['pn_scheduled']==1 && ($currDate >= $dateBegin) && ($currDate <= $dateEnd))){
+                        if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
-                        }           
+                        } else if ($user['pn_scheduled']==1){
+                            if(($currDate >= $dateBegin) && ($currDate <= $dateEnd)){
+                            } else {
+                                $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                            }
+                        }        
                     }
                 }
             } catch (Exception $e) {
@@ -863,19 +897,9 @@
                         date_default_timezone_set("Asia/Kolkata");
                         $currDate = date('h:i:s A');
                         $currDate=date('h:i:s A', strtotime($currDate));
-                        echo $currDate; // echos today! 
-                        echo "<br>";
-                        echo $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
-                        echo "<br>";
-                        echo $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
-                        echo "<br>";
-                        echo "pn_scheduled=".$user['pn_scheduled'];
-                        // echo "<br>";
-                        // echo "(currDate >= dateEnd)=".($currDate >= $dateEnd);
-                        // echo "<br>";
-                        // echo "(currDate <= dateBegin)=".($currDate <= $dateBegin);
-                        // echo "<br>".($user['pn_scheduled']==1 && ($currDate >= $dateEnd) && ($currDate <= $dateBegin));
-                        
+                        // echo $currDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
                         if($user['pn_scheduled']==0){
                             $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
                         } else if ($user['pn_scheduled']==1){
