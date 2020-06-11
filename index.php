@@ -172,7 +172,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             if($data['email']!=''){
               $sendMail = $restModel->sendNewUserWelcomeMail($data['name'],$data['email'],$pin,0);
             }
-            echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Thanks for signing up."]);
+            echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Your request to join the heera cars app community was sent. Please hold till we get back to you."]);
           } else {
             echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Signup failed."]);
           }
