@@ -169,10 +169,10 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           $pin = $restModel->generateUniquePIN();
           $insertFlag = $restModel->addNewUser($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['designation'], $pin, '1', 'agent');
           if($insertFlag){
-            if($data['email']!=''){
-              $sendMail = $restModel->sendNewUserWelcomeMail($data['name'],$data['email'],$pin,0);
-            }
-            echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Your request to join the heera cars app community was sent. Please hold till we get back to you."]);
+            // if($data['email']!=''){
+            //   $sendMail = $restModel->sendNewUserWelcomeMail($data['name'],$data['email'],$pin,0);
+            // }
+            echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Thank you for signing up with us. Once the account is activated you will receive email/ SMS with the login PIN."]);
           } else {
             echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Signup failed."]);
           }
