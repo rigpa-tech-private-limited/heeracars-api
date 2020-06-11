@@ -218,7 +218,7 @@
             try {
                 $Dbobj = new DbConnection(); 
                 $conn = $Dbobj->getdbconnect();
-                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on, active ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', '$role', '$added_by', NOW(), '2')";
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on, active ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', '$role', '$added_by', NOW(), '3')";
                 $query = mysqli_query($conn, $sql);
                 $insertFlag  = $query;
                 $last_id = mysqli_insert_id($conn);
