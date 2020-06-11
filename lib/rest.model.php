@@ -212,6 +212,40 @@
             }
         }
 
+        function addNewUser($name, $mobile, $email='', $company='', $location='', $designation='', $pin='',$added_by='0', $role=''){
+            
+            $insertFlag  = false;
+            try {
+                $Dbobj = new DbConnection(); 
+                $conn = $Dbobj->getdbconnect();
+                $sql = "INSERT INTO users ( name, mobile, email, company, location, designation, password, role,added_by, created_on, active ) VALUES ('$name', '$mobile', '$email', '$company', '$location', '$designation', '$pin', '$role', '$added_by', NOW(), '2')";
+                $query = mysqli_query($conn, $sql);
+                $insertFlag  = $query;
+                $last_id = mysqli_insert_id($conn);
+                $recipient_id = '1';
+                if($last_id>0){
+                    $user_id = $last_id;
+                    $user = $this->getPushTokenByUserID($user_id,$recipient_id);
+                    if(count($user)>0){
+                        $title = "Singup Request";
+                        $message = "New agent (ID#:".$user_id.") has been signed up";
+                        $addNotify = $this->addNotifications($user_id, $last_id, 'signup', $title, $message, $recipient_id);
+                        date_default_timezone_set("Asia/Kolkata");
+                        $currDate = date('h:i:s A');
+                        $currDate=date('h:i:s A', strtotime($currDate));
+                        // echo $paymentDate; // echos today! 
+                        $dateBegin = date('h:i:s A', strtotime($user['pn_from_time']));
+                        $dateEnd = date('h:i:s A', strtotime($user['pn_to_time']));
+                        $this->sendSinglePush($title, $message,'',$user['push_token'],$user['device_type']);
+                    }
+                }
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+            return $insertFlag;
+        }
+
         function addAgent($name, $mobile, $email='', $company='', $location='', $designation='', $pin='',$added_by='0', $role=''){
             
             $insertFlag  = false;
@@ -1266,6 +1300,86 @@
                                                     <p style="font-size:15px">Here\'s the link to download the Heera Cars app.</p>
                                                     <p style="font-size:15px"><a href="https://play.google.com/store/apps/details?id=com.heeracars" target="_blank">https://play.google.com/store/apps/details?id=com.heeracars</a></p>
                                                     <p style="font-size:15px;margin: 0;">Thanks</p>
+                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
+                                                </td>
+                                            </tr>';
+                } else {
+                    $ConditionalMailSubject = "Heera Cars - Your Account has been reset successfully!";
+                    $ConditionalmailContent = '<tr>
+                                                <td colspan="4" style="padding:15px;">
+                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                                    <p style="font-size:15px">Your account has been reset and you can log in by using new secret pin : '.$pin.'.</p>
+                                                    <p style="font-size:15px;margin: 0;">Thanks</p>
+                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
+                                                </td>
+                                            </tr>';
+                }
+                $message  = "<html><body>";
+
+                $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
+
+                $message .= "<tr><td>";
+
+                $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
+                            <tr height="80">
+                                <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
+                                </th>
+                            </tr>
+                            </thead><tbody>
+
+                            '.$ConditionalmailContent.'
+
+                            </tbody></table>';
+
+                $message .= "</td></tr>";
+                $message .= "</table>";
+
+                $message .= "</body></html>";
+                try {
+                    $mail->IsSMTP();
+                    $mail->isHTML(true);
+                    $mail->SMTPDebug  = 0;
+                    $mail->SMTPAuth   = true;
+                    $mail->SMTPSecure = "ssl";
+                    $mail->Host       = "smtp.gmail.com";
+                    $mail->Port       = 465;
+                    // $mail->AddAddress('maha@rigpa.in');
+                    $mail->AddAddress($toMail);
+                    $mail->Username   ="vinoth@rigpa.in";
+                    $mail->Password   ="vinoth@1506";
+                    $mail->SetFrom('vinoth@rigpa.in', 'Heera Cars');
+                    $mail->Subject    = $ConditionalMailSubject;
+                    $mail->Body 	  = $message;
+                    $mail->AltBody    = $message;
+                    if ($mail->Send()) {
+                        $msg = "Mail was successfully sent";
+                        $status = "success";
+                    }
+                } catch (phpmailerException $ex) {
+                    $msg = $ex->errorMessage();
+                    $status = "error";
+                }
+                return array("status"=>$status,"msg"=>$msg);
+            } else {
+                return array("status"=>'error',"msg"=>'invalid mobile number');
+            }
+        }
+
+        function sendNewUserWelcomeMail($name,$toMail='',$pin='',$resetFlag=0){
+            if($toMail!=''){
+                $mail = new PHPMailer(true);
+                $full_name  = strip_tags($name);
+                $ConditionalmailContent = '';
+                $ConditionalMailSubject = '';
+                if($resetFlag==0){
+                    $ConditionalMailSubject = "Heera Cars - Your Account has been created successfully!";
+                    $ConditionalmailContent = '<tr>
+                                                <td colspan="4" style="padding:15px;">
+                                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
+                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                                    <p style="font-size:15px">Thank you for signing up for Heera Cars App.Our team has not yet approved your request. We will notify you when it\'s approved.</p>
+                                                    <p style="font-size:15px">If you need any further clarification, please contact info@heeracars.com</p>
+                                                    <p style="font-size:15px;margin: 0;">Regards</p>
                                                 <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
                                                 </td>
                                             </tr>';
