@@ -160,27 +160,22 @@ if($_SERVER['REQUEST_METHOD']=="POST")
     }
 
     if($data['service_name']=='addNewUser'){
-      if(isset($data['name']) && isset($data['mobile']) && isset($data['token'])){
+      if(isset($data['name']) && isset($data['mobile'])){
         $restModel = new RESTAPIModel();
-        $tokenValidation = $restModel->validateUserToken($data['token']);
-        if($tokenValidation || ($tokenValidation==1)){
-          $mobileValidation = $restModel->validateMobile($data['mobile']);
-          if($mobileValidation || ($mobileValidation==1)){
-            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Mobile number already exists."]);
-          } else {            
-            $pin = $restModel->generateUniquePIN();
-            $insertFlag = $restModel->addNewUser($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['designation'], $pin, '1', $data['role']);
-            if($insertFlag){
-              if($data['email']!=''){
-                $sendMail = $restModel->sendNewUserWelcomeMail($data['name'],$data['email'],$pin,0);
-              }
-              echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Agent details added successfully."]);
-            } else {
-              echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Agent details not added."]);
+        $mobileValidation = $restModel->validateMobile($data['mobile']);
+        if($mobileValidation || ($mobileValidation==1)){
+          echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Mobile number already exists."]);
+        } else {            
+          $pin = $restModel->generateUniquePIN();
+          $insertFlag = $restModel->addNewUser($data['name'], $data['mobile'], $data['email'], $data['company'], $data['location'], $data['designation'], $pin, '1', 'agent');
+          if($insertFlag){
+            if($data['email']!=''){
+              $sendMail = $restModel->sendNewUserWelcomeMail($data['name'],$data['email'],$pin,0);
             }
+            echo json_encode(["status"=>"success", "status_code"=>"200", "name"=>$data['name'], "pin"=>$pin, "message"=>"Thanks for signing up."]);
+          } else {
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Signup failed."]);
           }
-        } else {
-          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
         }
       } else {
         echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
