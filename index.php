@@ -6,7 +6,7 @@ include('lib/rest.model.php');
 include('lib/textlocal.class.php');
 if($_SERVER['REQUEST_METHOD']=="POST")
 {
-  $allowedAPIs = array("addStudent","markNotificationAsRead","changePriority","pasueNotification","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage", "updateQuotationImage", "deleteQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken", "addNewUser", "addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
+  $allowedAPIs = array("approveStatusOfAgent","addStudent","markNotificationAsRead","changePriority","pasueNotification","editQuotation","getQuotationsCount","getNotifications","getNotificationsCount","validatePin","validateMobileNumber","addQuotationImage", "updateQuotationImage", "deleteQuotationImage", "getOTP", "verifyOTP", "listAgents", "validateToken", "addNewUser", "addAgent", "editAgent", "deleteAgent", "changeStatusOfAgent","resetPin","getModels","getBrands","addQuotations","getModelVariants","getVariantYears","resubmitQuotation","approveQuotation","rejectQuotation","soldQuotation","getQuotationDetail","getAllQuotations","updateProfile","getComments","deleteComments","editComments","addComments","testAPI");
 
   $data = json_decode( file_get_contents( 'php://input' ), true );
   // if($_REQUEST['service_name']=='validatePin'){
