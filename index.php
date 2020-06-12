@@ -257,7 +257,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
             $user = $restModel->getUserByID($data['id']);
             if(count($user) > 0){
               if($user['email']!=''){
-                $sendMail = $restModel->sendWelcomeMail($user['name'],$user['email'],$pin,2);
+                $sendMail = $restModel->sendWelcomeMail($user['name'],$user['email'],$data['pin'],2);
               }
             }
             echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"status changed."]);
