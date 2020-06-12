@@ -247,6 +247,31 @@ if($_SERVER['REQUEST_METHOD']=="POST")
       }
     }
 
+    if($data['service_name']=='approveStatusOfAgent'){
+      if(isset($data['id']) && isset($data['status']) && isset($data['token'])){
+        $restModel = new RESTAPIModel();
+        $tokenValidation = $restModel->validateUserToken($data['token']);
+        if($tokenValidation || ($tokenValidation==1)){
+          $updateCount = $restModel->updateStatusOfAgent($data['status'], $data['id']);
+          if($updateCount > 0){
+            $user = $restModel->getUserByID($data['id']);
+            if(count($user) > 0){
+              if($data['email']!=''){
+                $sendMail = $restModel->sendWelcomeMail($user['name'],$user['email'],$pin,2);
+              }
+            }
+            echo json_encode(["status"=>"success", "status_code"=>"200", "message"=>"status changed."]);
+          } else {
+            echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"status not updated"]);
+          }
+        } else {
+          echo json_encode(["status"=>"error", "status_code"=>"401", "message"=>"Invalid Token"]);
+        }
+      } else {
+        echo json_encode(["status"=>"error","status_code"=>"402", "message"=>"Invalid parameters"]);
+      }
+    }
+
     if($data['service_name']=='deleteAgent'){
       if(isset($data['id']) && isset($data['token'])){
         $restModel = new RESTAPIModel();

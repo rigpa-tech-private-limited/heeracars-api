@@ -178,6 +178,19 @@
            return $user;
         }
 
+        function getUserByID($id){
+            $user  = [];
+            try {
+                $Dbobj = new DbConnection(); 
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT name,email,password as pin FROM users WHERE id = '$id' AND active='1'");
+                $user = mysqli_fetch_assoc($query);
+            } catch (Exception $e) {
+                print "Error!: " . $e->getMessage() . "<br/>";
+                die();
+            }
+           return $user;
+        }
+
         function validateEmail($email){
             $count  = 0;
             try {
@@ -227,8 +240,8 @@
                     $user_id = $last_id;
                     $user = $this->getPushTokenByUserID($user_id,$recipient_id);
                     if(count($user)>0){
-                        $title = "Singup Request";
-                        $message = "New agent (ID#:".$user_id.") has been signed up";
+                        $title = "Signup Request";
+                        $message = "There is a new agent signup request from ".$user['name'];
                         $addNotify = $this->addNotifications($user_id, $last_id, 'signup', $title, $message, $recipient_id);
                         date_default_timezone_set("Asia/Kolkata");
                         $currDate = date('h:i:s A');
@@ -1290,7 +1303,18 @@
                 $full_name  = strip_tags($name);
                 $ConditionalmailContent = '';
                 $ConditionalMailSubject = '';
-                if($resetFlag==0){
+                if($resetFlag==2){
+                    $ConditionalMailSubject = "Heera Cars - Your Account has been created successfully!";
+                    $ConditionalmailContent = '<tr>
+                                                <td colspan="4" style="padding:15px;">
+                                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
+                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
+                                                    <p style="font-size:15px">Your account has now been created and you can log in by using secret pin : '.$pin.' in our mobile app and start using our services.</p>
+                                                    <p style="font-size:15px;margin: 0;">Thanks</p>
+                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
+                                                </td>
+                                            </tr>';
+                } else if($resetFlag==0){
                     $ConditionalMailSubject = "Heera Cars - Your Account has been created successfully!";
                     $ConditionalmailContent = '<tr>
                                                 <td colspan="4" style="padding:15px;">
@@ -1303,7 +1327,7 @@
                                                 <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
                                                 </td>
                                             </tr>';
-                } else {
+                } else if($resetFlag==1){
                     $ConditionalMailSubject = "Heera Cars - Your Account has been reset successfully!";
                     $ConditionalmailContent = '<tr>
                                                 <td colspan="4" style="padding:15px;">
@@ -1365,84 +1389,5 @@
             }
         }
 
-        function sendNewUserWelcomeMail($name,$toMail='',$pin='',$resetFlag=0){
-            if($toMail!=''){
-                $mail = new PHPMailer(true);
-                $full_name  = strip_tags($name);
-                $ConditionalmailContent = '';
-                $ConditionalMailSubject = '';
-                if($resetFlag==0){
-                    $ConditionalMailSubject = "Heera Cars - Your Account has been created successfully!";
-                    $ConditionalmailContent = '<tr>
-                                                <td colspan="4" style="padding:15px;">
-                                                    <p style="font-size: 20px;text-align: center;"><b>Welcome to Heera Cars! </b></p>
-                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
-                                                    <p style="font-size:15px">Thank you for signing up for Heera Cars App.Our team has not yet approved your request. We will notify you when it\'s approved.</p>
-                                                    <p style="font-size:15px">If you need any further clarification, please contact info@heeracars.com</p>
-                                                    <p style="font-size:15px;margin: 0;">Regards</p>
-                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
-                                                </td>
-                                            </tr>';
-                } else {
-                    $ConditionalMailSubject = "Heera Cars - Your Account has been reset successfully!";
-                    $ConditionalmailContent = '<tr>
-                                                <td colspan="4" style="padding:15px;">
-                                                    <p style="font-size:15px">Hi '.$full_name.',</p>
-                                                    <p style="font-size:15px">Your account has been reset and you can log in by using new secret pin : '.$pin.'.</p>
-                                                    <p style="font-size:15px;margin: 0;">Thanks</p>
-                                                <p style="font-size:15px;margin: 5px 0;">Team Heera Cars</p>
-                                                </td>
-                                            </tr>';
-                }
-                $message  = "<html><body>";
-
-                $message .= "<table width='100%' bgcolor='#e0e0e0' cellpadding='0' cellspacing='0' border='0'>";
-
-                $message .= "<tr><td>";
-
-                $message .= '<table align="center" width="100%" border="0" cellpadding="0" cellspacing="0" style="max-width:650px;background-color:#fff;font-family:Verdana,Geneva,sans-serif"><thead>
-                            <tr height="80">
-                                <th colspan="4" style="background-color: #fff;border-bottom: none;font-family:Verdana,Geneva,sans-serif;color:#333;font-size:34px;padding: 10px;">
-                                </th>
-                            </tr>
-                            </thead><tbody>
-
-                            '.$ConditionalmailContent.'
-
-                            </tbody></table>';
-
-                $message .= "</td></tr>";
-                $message .= "</table>";
-
-                $message .= "</body></html>";
-                try {
-                    $mail->IsSMTP();
-                    $mail->isHTML(true);
-                    $mail->SMTPDebug  = 0;
-                    $mail->SMTPAuth   = true;
-                    $mail->SMTPSecure = "ssl";
-                    $mail->Host       = "smtp.gmail.com";
-                    $mail->Port       = 465;
-                    // $mail->AddAddress('maha@rigpa.in');
-                    $mail->AddAddress($toMail);
-                    $mail->Username   ="vinoth@rigpa.in";
-                    $mail->Password   ="vinoth@1506";
-                    $mail->SetFrom('vinoth@rigpa.in', 'Heera Cars');
-                    $mail->Subject    = $ConditionalMailSubject;
-                    $mail->Body 	  = $message;
-                    $mail->AltBody    = $message;
-                    if ($mail->Send()) {
-                        $msg = "Mail was successfully sent";
-                        $status = "success";
-                    }
-                } catch (phpmailerException $ex) {
-                    $msg = $ex->errorMessage();
-                    $status = "error";
-                }
-                return array("status"=>$status,"msg"=>$msg);
-            } else {
-                return array("status"=>'error',"msg"=>'invalid mobile number');
-            }
-        }
     }
 ?>
