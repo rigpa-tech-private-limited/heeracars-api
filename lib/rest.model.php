@@ -182,7 +182,7 @@
             $user  = [];
             try {
                 $Dbobj = new DbConnection(); 
-                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT name,email,password as pin FROM users WHERE id = '$id' AND active='1'");
+                $query = mysqli_query($Dbobj->getdbconnect(), "SELECT name,email,password as pin FROM users WHERE id = '$id'");
                 $user = mysqli_fetch_assoc($query);
             } catch (Exception $e) {
                 print "Error!: " . $e->getMessage() . "<br/>";
