@@ -256,7 +256,7 @@ if($_SERVER['REQUEST_METHOD']=="POST")
           if($updateCount > 0){
             $user = $restModel->getUserByID($data['id']);
             if(count($user) > 0){
-              if($data['email']!=''){
+              if($user['email']!=''){
                 $sendMail = $restModel->sendWelcomeMail($user['name'],$user['email'],$pin,2);
               }
             }
